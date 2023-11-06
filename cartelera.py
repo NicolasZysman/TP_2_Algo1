@@ -3,13 +3,19 @@ import tkinter as tk
 # import qrcode
 import requests
 
-# r = requests.get("https://cinemas")
+
+API_KEY: int = 1 #Todavia no esta
 
 # GET /cinemas/{cinema_id}/movies
 # Request headers:
 # “Authorization”: “Bearer token”
 # Response type: JSON
 # Response body:
+
+
+r = requests.get("https://cinemas")
+r_json = r.json()
+
 
 ventana = tk.Tk(className = "Cartelera")
 ventana.geometry("500x500")
