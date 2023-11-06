@@ -1,6 +1,9 @@
 import tkinter as tk
 # import os
 # import qrcode
+import requests
+
+# r = requests.get("https://cinemas")
 
 # GET /cinemas/{cinema_id}/movies
 # Request headers:
