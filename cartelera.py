@@ -4,16 +4,11 @@ import tkinter as tk
 import requests
 
 
-API_KEY: int = 1 #Todavia no esta
+API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 
-# GET /cinemas/{cinema_id}/movies
-# Request headers:
-# “Authorization”: “Bearer token”
-# Response type: JSON
-# Response body:
+Headers = { "Authorization" : API_KEY }
 
-
-r = requests.get("https://cinemas")
+r = requests.get("https://cinemas", headers=Headers)
 r_json = r.json()
 
 
