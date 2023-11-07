@@ -18,6 +18,6 @@ ventana.geometry("500x500")
 ubicacion = tk.Label(ventana, text = "Palermo, Belgrano, Villa Crespo")
 ubicacion.pack()
 
-print("pepe")
+print("prueba rama")
 
 ventana.mainloop()
