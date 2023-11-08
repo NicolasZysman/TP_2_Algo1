@@ -56,7 +56,7 @@ def get_cines(Headers: dict) -> list[dict]:
 
 def get_pelis_en_cine(Headers: dict, cine_id: int) -> list[dict]:
 
-    respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/cinemas/{cine_id}/movies", headers=Headers)
+    respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/cinemas/{cine_id}/movies", headers=Headers)
     info_pelis_en_cine: list[dict] = respuesta.json()
 
     return info_pelis_en_cine
