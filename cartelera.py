@@ -75,6 +75,7 @@ def main() -> None:
 
 main()
 
+# TEST
 
 # ventana = tk.Tk(className = "Cartelera")
 # ventana.geometry("500x500")
