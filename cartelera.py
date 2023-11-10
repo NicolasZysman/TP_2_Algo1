@@ -3,14 +3,15 @@ import tkinter as tk
 # import qrcode
 import requests
 
-
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
+
 
 def autorizacion() -> dict:
     
     Headers: dict = { "Authorization" : f"Bearer {API_KEY}" }
 
     return Headers
+
 
 def get_peliculas(Headers: dict) -> list[dict]:
 
@@ -24,6 +25,7 @@ def get_peliculas(Headers: dict) -> list[dict]:
 
     return info_peliculas
 
+
 def get_pelicula_por_Id(Headers: dict, pelicula_id: int) -> dict:
 
     try:
@@ -35,6 +37,7 @@ def get_pelicula_por_Id(Headers: dict, pelicula_id: int) -> dict:
     info_pelicula_individual: list[dict] = respuesta.json()
 
     return info_pelicula_individual
+
 
 def get_poster_por_Id(Headers: dict, poster_id: int) -> dict:
 
@@ -48,6 +51,7 @@ def get_poster_por_Id(Headers: dict, poster_id: int) -> dict:
 
     return img_poster
 
+
 def get_snacks(Headers: dict) -> dict:
 
     try:
@@ -59,6 +63,7 @@ def get_snacks(Headers: dict) -> dict:
     info_snacks: dict = respuesta.json()
 
     return info_snacks
+
 
 def get_proyeccion(Headers: dict, pelicula_id: int) -> list:
 
@@ -72,6 +77,7 @@ def get_proyeccion(Headers: dict, pelicula_id: int) -> list:
 
     return info_proyeccion
 
+
 def get_cines(Headers: dict) -> list[dict]:
 
     try:
@@ -84,6 +90,7 @@ def get_cines(Headers: dict) -> list[dict]:
 
     return info_cines
 
+
 def get_pelis_en_cine(Headers: dict, cine_id: int) -> list[dict]:
 
     try:
@@ -95,6 +102,7 @@ def get_pelis_en_cine(Headers: dict, cine_id: int) -> list[dict]:
     info_pelis_en_cine: list[dict] = respuesta.json()
 
     return info_pelis_en_cine
+
 
 def main() -> None:
     
@@ -109,7 +117,6 @@ def main() -> None:
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
 
 main()
-
 
 # ventana = tk.Tk(className = "Cartelera")
 # ventana.geometry("500x500")
