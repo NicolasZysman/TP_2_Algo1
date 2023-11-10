@@ -109,6 +109,8 @@ def main() -> None:
     Headers = autorizacion()
 
     info_peliculas = get_peliculas(Headers)
+    poster_id = [dictionary["poster_id"] for dictionary in info_peliculas]
+    print(poster_id)
     # info_pelicula_individual = get_pelicula_por_Id(Headers, pelicula_id)
     # img_poster = get_poster_por_Id(Headers, poster_id)
     info_snacks = get_snacks(Headers)
