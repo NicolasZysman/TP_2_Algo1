@@ -113,8 +113,6 @@ def obtener_ubicaciones(cines: dict) -> list[str]:
             lista_ubicaciones.append(cine["location"])
     
     return lista_ubicaciones
-        
-    
 
 
 def main() -> None:
@@ -128,8 +126,6 @@ def main() -> None:
     # info_proyeccion = get_proyeccion(Headers, pelicula_id)
     info_cines = get_cines(Headers)
     ubicaciones = obtener_ubicaciones(info_cines)
-    
-
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
     
 main()
