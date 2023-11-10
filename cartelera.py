@@ -14,49 +14,84 @@ def autorizacion() -> dict:
 
 def get_peliculas(Headers: dict) -> list[dict]:
 
-    respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/movies", headers=Headers)
+    try:
+        respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/movies", headers=Headers)
+        respuesta.raise_for_status() # Esto es necesario para que tambien agarre los errores HTTP
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e) # Termina el programa y muestra el error
+    
     info_peliculas: list[dict] = respuesta.json()
 
     return info_peliculas
 
 def get_pelicula_por_Id(Headers: dict, pelicula_id: int) -> dict:
 
-    respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/movies/{pelicula_id}", headers=Headers)
+    try:
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/movies/{pelicula_id}", headers=Headers)
+        respuesta.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
+    
     info_pelicula_individual: list[dict] = respuesta.json()
 
     return info_pelicula_individual
 
 def get_poster_por_Id(Headers: dict, poster_id: int) -> dict:
 
-    respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/posters/{poster_id}", headers=Headers)
+    try:
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/posters/{poster_id}", headers=Headers)
+        respuesta.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
+    
     img_poster: dict = respuesta.json()
 
     return img_poster
 
 def get_snacks(Headers: dict) -> dict:
 
-    respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/snacks", headers=Headers)
+    try:
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/snacks", headers=Headers)
+        respuesta.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
+    
     info_snacks: dict = respuesta.json()
 
     return info_snacks
 
 def get_proyeccion(Headers: dict, pelicula_id: int) -> list:
 
-    respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/movies/{pelicula_id}/cinemas", headers=Headers)
+    try:
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/movies/{pelicula_id}/cinemas", headers=Headers)
+        respuesta.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
+    
     info_proyeccion: list = respuesta.json()
 
     return info_proyeccion
 
 def get_cines(Headers: dict) -> list[dict]:
 
-    respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/cinemas", headers=Headers)
+    try:
+        respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/cinemas", headers=Headers)
+        respuesta.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
+    
     info_cines: list[dict] = respuesta.json()
 
     return info_cines
 
 def get_pelis_en_cine(Headers: dict, cine_id: int) -> list[dict]:
 
-    respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/cinemas/{cine_id}/movies", headers=Headers)
+    try:
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/cinemas/{cine_id}/movies", headers=Headers)
+        respuesta.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
+    
     info_pelis_en_cine: list[dict] = respuesta.json()
 
     return info_pelis_en_cine
