@@ -104,6 +104,17 @@ def get_pelis_en_cine(Headers: dict, cine_id: int) -> list[dict]:
     return info_pelis_en_cine
 
 
+def obtener_ubicaciones(cines: dict) -> list[str]:
+
+    lista_ubicaciones: list[str] = []
+
+    for cine in cines:
+        if cine["location"] not in lista_ubicaciones:
+            lista_ubicaciones.append(cine["location"])
+    
+    return lista_ubicaciones
+
+
 def main() -> None:
     
     Headers = autorizacion()
@@ -116,8 +127,9 @@ def main() -> None:
     info_snacks = get_snacks(Headers)
     # info_proyeccion = get_proyeccion(Headers, pelicula_id)
     info_cines = get_cines(Headers)
+    ubicaciones = obtener_ubicaciones(info_cines)
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
-
+    
 main()
 
 # ventana = tk.Tk(className = "Cartelera")
@@ -125,6 +137,7 @@ main()
 
 # ubicacion = tk.Label(ventana, text = "Palermo, Belgrano, Villa Crespo")
 # ubicacion.pack()
+
 
 
 # ventana.mainloop()
