@@ -121,23 +121,22 @@ def main() -> None:
 
     info_peliculas = get_peliculas(Headers)
     poster_id = [dictionary["poster_id"] for dictionary in info_peliculas]
-    print(poster_id)
     # info_pelicula_individual = get_pelicula_por_Id(Headers, pelicula_id)
     # img_poster = get_poster_por_Id(Headers, poster_id)
     info_snacks = get_snacks(Headers)
     # info_proyeccion = get_proyeccion(Headers, pelicula_id)
     info_cines = get_cines(Headers)
     ubicaciones = obtener_ubicaciones(info_cines)
+    def onbutton_click(paginado):
+        print(f"{paginado}")
+
+    ventana = tk.Tk(className = "Cartelera")
+    ventana.geometry("500x500")
+    for i,ubicacion in enumerate(ubicaciones):
+        boton = tk.Button(ventana, text=ubicacion, command=lambda e=ubicacion: onbutton_click(e))
+        boton.grid(row=0, column=i)
+
+    ventana.mainloop()
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
     
 main()
-
-# ventana = tk.Tk(className = "Cartelera")
-# ventana.geometry("500x500")
-
-# ubicacion = tk.Label(ventana, text = "Palermo, Belgrano, Villa Crespo")
-# ubicacion.pack()
-
-
-
-# ventana.mainloop()
