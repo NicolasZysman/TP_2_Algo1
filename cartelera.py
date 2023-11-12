@@ -54,12 +54,15 @@ def get_poster_por_Id(Headers: dict, poster_id: int) -> dict:
 
 def lista_img_posters(Headers: dict, posters: list) -> list:
     
-    lista_posters: list = []
+    lista_dict_posters: list[dict] = []
 
     for poster_id in posters:
-        lista_posters.append(get_poster_por_Id(Headers, poster_id))
+        lista_dict_posters.append(get_poster_por_Id(Headers, poster_id))
     
-    return lista_posters
+    lista_str_posters: list[str] = [diccionario["poster_image"] for diccionario in lista_dict_posters]
+    
+    return lista_str_posters
+
 
 def get_snacks(Headers: dict) -> dict:
 
@@ -133,8 +136,7 @@ def lista_poster_id(peliculas: list) -> list[int]:
 
 def onbutton_click(cine_id: int) -> int:
 
-    #Hay que hacer que cambie de pagina a la pagina principal con todas las peliculas    
-    print(cine_id)
+    #Hay que hacer que cambie de pagina a la pagina principal con todas las peliculas   
 
     ventana_peliculas = tk.Toplevel()
     ventana_peliculas.geometry("1000x500")
@@ -158,6 +160,15 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
         boton = tk.Button(ventana_ubicaciones, text=ubicacion, command=lambda e= i+1: onbutton_click(e))
         boton.grid(row=0, column=i)
 
+def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
+    
+    for poster in lista_posters:
+        print(poster)
+        img = Image.open(r"{poster}")
+        tk_img = ImageTk.PhotoImage(image=img)
+        boton = tk.Button(ventana_ubicaciones, image=tk_img)
+        boton.grid(row=0, column=2)
+        
 
 def main() -> None:
     
@@ -176,6 +187,7 @@ def main() -> None:
     ubicaciones = obtener_ubicaciones(info_cines)
     ventana_ubicaciones = crear_ventana_ubicaciones()
     botones_ubicacion(ventana_ubicaciones, ubicaciones)
+    mostrar_posters(lista_posters, ventana_ubicaciones)
     ventana_ubicaciones.mainloop()
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
     # lista_pelis_en_cine: list = [diccionario["has_movies"] for diccionario in info_pelis_en_cine]
