@@ -126,6 +126,13 @@ def onbutton_click(cine_id: int) -> int:
 
     #Hay que hacer que cambie de pagina a la pagina principal con todas las peliculas    
     print(cine_id)
+
+    ventana_peliculas = tk.Toplevel()
+    ventana_peliculas.geometry("1000x500")
+
+    portada_1 = tk.Button(ventana_peliculas, text="Pelicula 1", width=50, borderwidth=5)
+    portada_1.grid()
+
     return cine_id
 
 def crear_ventana_ubicaciones() -> None:
