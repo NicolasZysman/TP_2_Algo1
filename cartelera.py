@@ -2,6 +2,7 @@ import tkinter as tk
 # import os
 # import qrcode
 import requests
+from PIL import ImageTk,Image
 
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 
@@ -51,6 +52,14 @@ def get_poster_por_Id(Headers: dict, poster_id: int) -> dict:
 
     return img_poster
 
+def lista_img_posters(Headers: dict, posters: list) -> list:
+    
+    lista_posters: list = []
+
+    for poster_id in posters:
+        lista_posters.append(get_poster_por_Id(Headers, poster_id))
+    
+    return lista_posters
 
 def get_snacks(Headers: dict) -> dict:
 
@@ -114,9 +123,9 @@ def obtener_ubicaciones(cines: dict) -> list[str]:
     
     return lista_ubicaciones
 
-def lista_poster_id(info_peliculas: dict) -> list[int]:
+def lista_poster_id(peliculas: list) -> list[int]:
 
-    poster_id = [diccionario["poster_id"] for diccionario in info_peliculas]
+    poster_id = [diccionario["poster_id"] for diccionario in peliculas]
     print(poster_id)
 
     return poster_id
@@ -129,6 +138,7 @@ def onbutton_click(cine_id: int) -> int:
     return cine_id
 
 def crear_ventana_ubicaciones() -> None:
+
     ventana_ubicaciones = tk.Tk(className = "Cartelera")
     ventana_ubicaciones.geometry("500x500")
 
@@ -141,12 +151,16 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
         boton = tk.Button(ventana_ubicaciones, text=ubicacion, command=lambda e= i+1: onbutton_click(e))
         boton.grid(row=0, column=i)
 
+
 def main() -> None:
     
     Headers = autorizacion()
 
     info_peliculas = get_peliculas(Headers)
-    poster_id = lista_poster_id(info_peliculas)
+    # posters_id = lista_poster_id(info_peliculas)
+    posters_id = [1, 2, 3, 4, 5, 9, 10, 14]
+
+    lista_posters = lista_img_posters(Headers, posters_id)
     # info_pelicula_individual = get_pelicula_por_Id(Headers, pelicula_id)
     # img_poster = get_poster_por_Id(Headers, poster_id)
     info_snacks = get_snacks(Headers)
