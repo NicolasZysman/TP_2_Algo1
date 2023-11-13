@@ -114,20 +114,60 @@ def obtener_ubicaciones(cines: dict) -> list[str]:
     
     return lista_ubicaciones
 
+def lista_poster_id(info_peliculas: dict) -> list[int]:
+
+    poster_id = [diccionario["poster_id"] for diccionario in info_peliculas]
+    print(poster_id)
+
+    return poster_id
+
+
+def onbutton_click(cine_id: int) -> int:
+
+    #Hay que hacer que cambie de pagina a la pagina principal con todas las peliculas    
+    print(cine_id)
+
+    ventana_peliculas = tk.Toplevel()
+    ventana_peliculas.geometry("1000x500")
+
+    portada_1 = tk.Button(ventana_peliculas, text="Pelicula 1", width=50, borderwidth=5)
+    portada_1.grid()
+
+    return cine_id
+
+def crear_ventana_ubicaciones() -> None:
+    ventana_ubicaciones = tk.Tk(className = "Cartelera")
+    ventana_ubicaciones.geometry("500x500")
+
+    return ventana_ubicaciones
+
+
+def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
+    
+    for i,ubicacion in enumerate(ubicaciones):
+        boton = tk.Button(ventana_ubicaciones, text=ubicacion, command=lambda e= i+1: onbutton_click(e))
+        boton.grid(row=0, column=i)
 
 def main() -> None:
     
     Headers = autorizacion()
 
     info_peliculas = get_peliculas(Headers)
+    poster_id = lista_poster_id(info_peliculas)
     # info_pelicula_individual = get_pelicula_por_Id(Headers, pelicula_id)
     # img_poster = get_poster_por_Id(Headers, poster_id)
     info_snacks = get_snacks(Headers)
     # info_proyeccion = get_proyeccion(Headers, pelicula_id)
     info_cines = get_cines(Headers)
     ubicaciones = obtener_ubicaciones(info_cines)
+    ventana_ubicaciones = crear_ventana_ubicaciones()
+    botones_ubicacion(ventana_ubicaciones, ubicaciones)
+    ventana_ubicaciones.mainloop()
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
+    # lista_pelis_en_cine: list = [diccionario["has_movies"] for diccionario in info_pelis_en_cine]
+    # print(info_pelis_en_cine)
     
+<<<<<<< HEAD
 main()
 
 # ventana = tk.Tk(className = "Cartelera")
@@ -139,3 +179,6 @@ main()
 
 
 ventana.mainloop()
+=======
+main()
+>>>>>>> 0587162077ccc408ba5c47855a4712ed1e8cbe7d
