@@ -1,9 +1,12 @@
 import tkinter as tk
+
 # import os
 # import qrcode
+
 import requests
-from PIL import ImageTk,Image
+from PIL import ImageTk, Image
 import cv2
+
 
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 
@@ -127,10 +130,10 @@ def obtener_ubicaciones(cines: dict) -> list[str]:
     
     return lista_ubicaciones
 
+
 def lista_poster_id(peliculas: list) -> list[int]:
 
     poster_id = [diccionario["poster_id"] for diccionario in peliculas]
-    print(poster_id)
 
     return poster_id
 
@@ -146,6 +149,7 @@ def onbutton_click(cine_id: int) -> int:
     portada_1.pack()
 
     return cine_id
+
 
 def crear_ventana_ubicaciones() -> None:
 
@@ -164,36 +168,46 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
     salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
     salir.grid(row = 0, column = (i + 1))
 
+
 def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
     
     for poster in lista_posters:
+
         # print(poster)
         # img = Image.open(poster)
         # tk_img = ImageTk.PhotoImage(img)
+
         img = ImageTk.PhotoImage(data=poster)
         boton = tk.Button(ventana_ubicaciones, image=img)
         boton.grid(row=0, column=2)
         
 
+def buscar_pelicula()
+
 def main() -> None:
     
     Headers = autorizacion()
-
-    info_peliculas = get_peliculas(Headers)
-    # posters_id = lista_poster_id(info_peliculas)
     posters_id = [1, 2, 3, 4, 5, 9, 10, 14]
 
+    info_peliculas = get_peliculas(Headers)
+    posters_id = lista_poster_id(info_peliculas)
+
     lista_posters = lista_img_posters(Headers, posters_id)
+
     # info_pelicula_individual = get_pelicula_por_Id(Headers, pelicula_id)
     # img_poster = get_poster_por_Id(Headers, poster_id)
+
     info_snacks = get_snacks(Headers)
+
     # info_proyeccion = get_proyeccion(Headers, pelicula_id)
+
     info_cines = get_cines(Headers)
     ubicaciones = obtener_ubicaciones(info_cines)
     ventana_ubicaciones = crear_ventana_ubicaciones()
     botones_ubicacion(ventana_ubicaciones, ubicaciones)
     mostrar_posters(lista_posters, ventana_ubicaciones)
     ventana_ubicaciones.mainloop()
+
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
     # lista_pelis_en_cine: list = [diccionario["has_movies"] for diccionario in info_pelis_en_cine]
     # print(info_pelis_en_cine)
