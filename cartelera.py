@@ -3,6 +3,7 @@ import tkinter as tk
 # import qrcode
 import requests
 from PIL import ImageTk,Image
+import cv2
 
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 
@@ -163,10 +164,11 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
 def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
     
     for poster in lista_posters:
-        print(poster)
-        img = Image.open(r"{poster}")
-        tk_img = ImageTk.PhotoImage(image=img)
-        boton = tk.Button(ventana_ubicaciones, image=tk_img)
+        # print(poster)
+        # img = Image.open(poster)
+        # tk_img = ImageTk.PhotoImage(img)
+        img = ImageTk.PhotoImage(data=poster)
+        boton = tk.Button(ventana_ubicaciones, image=img)
         boton.grid(row=0, column=2)
         
 
