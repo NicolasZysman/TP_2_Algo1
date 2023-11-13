@@ -167,18 +167,4 @@ def main() -> None:
     # lista_pelis_en_cine: list = [diccionario["has_movies"] for diccionario in info_pelis_en_cine]
     # print(info_pelis_en_cine)
     
-<<<<<<< HEAD
 main()
-
-# ventana = tk.Tk(className = "Cartelera")
-# ventana.geometry("500x500")
-
-# ubicacion = tk.Label(ventana, text = "Palermo, Belgrano, Villa Crespo")
-# ubicacion.pack()
-
-
-
-ventana.mainloop()
-=======
-main()
->>>>>>> 0587162077ccc408ba5c47855a4712ed1e8cbe7d
