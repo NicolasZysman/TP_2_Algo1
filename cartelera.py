@@ -164,15 +164,16 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
     salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
     salir.grid(row = 0, column = (i + 1))
 
-def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
+# def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
     
-    for poster in lista_posters:
-        # print(poster)
-        # img = Image.open(poster)
-        # tk_img = ImageTk.PhotoImage(img)
-        img = ImageTk.PhotoImage(data=poster)
-        boton = tk.Button(ventana_ubicaciones, image=img)
-        boton.grid(row=0, column=2)
+#     for poster in lista_posters:
+#         # print(poster)
+#         # img = Image.open(poster)
+#         # tk_img = ImageTk.PhotoImage(img)
+#         img = cv2.imread(poster, -1)
+#         cv2.imshow("Image", img)
+#         # boton = tk.Label(ventana_ubicaciones, image=img)
+#         # boton.grid(row=3, column=2)
         
 
 def main() -> None:
@@ -192,7 +193,7 @@ def main() -> None:
     ubicaciones = obtener_ubicaciones(info_cines)
     ventana_ubicaciones = crear_ventana_ubicaciones()
     botones_ubicacion(ventana_ubicaciones, ubicaciones)
-    mostrar_posters(lista_posters, ventana_ubicaciones)
+    # mostrar_posters(lista_posters, ventana_ubicaciones)
     ventana_ubicaciones.mainloop()
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
     # lista_pelis_en_cine: list = [diccionario["has_movies"] for diccionario in info_pelis_en_cine]
