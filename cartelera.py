@@ -138,6 +138,16 @@ def lista_poster_id(peliculas: list) -> list[int]:
     return poster_id
 
 
+#def mostrar_pelicula_en_cine(ventana, cine_id: int, get_entry):
+#    header = autorizacion()
+#    peliculas = get_pelis_en_cine(header, cine_id)
+#    pelicula_buscada = get_entry
+#    for peli in peliculas:
+#        if 
+#    label = tk.Label(ventana,)
+
+
+
 def onbutton_click(cine_id: int) -> int:
 
     #Hay que hacer que cambie de pagina a la pagina principal con todas las peliculas   
@@ -148,7 +158,13 @@ def onbutton_click(cine_id: int) -> int:
     portada_1 = tk.Button(ventana_peliculas, text="Pelicula 1", width=50, borderwidth=5, command=ventana_peliculas.destroy)
     portada_1.pack()
 
-    return cine_id
+    entry_buscar_pelicula = tk.Entry(ventana_peliculas)
+    entry_buscar_pelicula.pack(pady = 10)
+#   get_entry = entry_buscar_pelicula.get()
+    boton_busqueda = tk.Button(ventana_peliculas, text = "Buscar pelicula...") # command = lambda: mostrar_pelicula_en_cine(ventana_peliculas, cine_id, get_entry)
+    boton_busqueda.pack()
+#   print(boton_busqueda)
+#    return cine_id
 
 
 def crear_ventana_ubicaciones() -> None:
@@ -168,21 +184,17 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
     salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
     salir.grid(row = 0, column = (i + 1))
 
-
-def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
+# def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
     
-    for poster in lista_posters:
-
-        # print(poster)
-        # img = Image.open(poster)
-        # tk_img = ImageTk.PhotoImage(img)
-
-        img = ImageTk.PhotoImage(data=poster)
-        boton = tk.Button(ventana_ubicaciones, image=img)
-        boton.grid(row=0, column=2)
+#     for poster in lista_posters:
+#         # print(poster)
+#         # img = Image.open(poster)
+#         # tk_img = ImageTk.PhotoImage(img)
+#         img = cv2.imread(poster, -1)
+#         cv2.imshow("Image", img)
+#         # boton = tk.Label(ventana_ubicaciones, image=img)
+#         # boton.grid(row=3, column=2)
         
-
-def buscar_pelicula()
 
 def main() -> None:
     
@@ -205,7 +217,8 @@ def main() -> None:
     ubicaciones = obtener_ubicaciones(info_cines)
     ventana_ubicaciones = crear_ventana_ubicaciones()
     botones_ubicacion(ventana_ubicaciones, ubicaciones)
-    mostrar_posters(lista_posters, ventana_ubicaciones)
+    
+    # mostrar_posters(lista_posters, ventana_ubicaciones)
     ventana_ubicaciones.mainloop()
 
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
