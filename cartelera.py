@@ -142,8 +142,8 @@ def onbutton_click(cine_id: int) -> int:
     ventana_peliculas = tk.Toplevel()
     ventana_peliculas.geometry("1000x500")
 
-    portada_1 = tk.Button(ventana_peliculas, text="Pelicula 1", width=50, borderwidth=5)
-    portada_1.grid()
+    portada_1 = tk.Button(ventana_peliculas, text="Pelicula 1", width=50, borderwidth=5, command=ventana_peliculas.destroy)
+    portada_1.pack()
 
     return cine_id
 
@@ -160,6 +160,9 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
     for i,ubicacion in enumerate(ubicaciones):
         boton = tk.Button(ventana_ubicaciones, text=ubicacion, command=lambda e= i+1: onbutton_click(e))
         boton.grid(row=0, column=i)
+    
+    salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
+    salir.grid(row = 0, column = (i + 1))
 
 def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
     
