@@ -4,6 +4,8 @@ import tkinter as tk
 import requests
 from PIL import ImageTk,Image
 import cv2
+from io import BytesIO
+import base64
 
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 
@@ -164,17 +166,36 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
     salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
     salir.grid(row = 0, column = (i + 1))
 
-# def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
-    
-#     for poster in lista_posters:
-#         # print(poster)
-#         # img = Image.open(poster)
-#         # tk_img = ImageTk.PhotoImage(img)
-#         img = cv2.imread(poster, -1)
-#         cv2.imshow("Image", img)
-#         # boton = tk.Label(ventana_ubicaciones, image=img)
-#         # boton.grid(row=3, column=2)
+def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
+
+    for i, poster in enumerate(lista_posters):
+        poster = (poster.replace('data:image/jpeg;base64,', ''))
+        poster_bytes = base64.b64decode(poster)
+
+        img = Image.open(BytesIO(poster_bytes))
+        tk_imagen = ImageTk.PhotoImage(img)
+
+        etiqueta = tk.Label(ventana_ubicaciones, image=tk_imagen)
+        etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
+        etiqueta.image = tk_imagen 
+
+        boton = tk.Button(ventana_ubicaciones, image=tk_imagen)
+        boton.grid(row=3, column=2)
+
+
+    """
+    for i, poster in enumerate(lista_posters):
+        poster_data = poster.split(',')[1]
+        poster_bytes = base64.b64decode(poster_data)
+
+        imagen = Image.open(BytesIO(poster_bytes))
+        tk_imagen = ImageTk.PhotoImage(imagen)
         
+        # Crear una etiqueta para mostrar la imagen
+        etiqueta = tk.Label(ventana_ubicaciones, image=tk_imagen)
+        etiqueta.grid(row=i+1, column=0, padx=10, pady=10)  # Ajustar la posición y el espaciado según sea necesario
+        etiqueta.image = tk_imagen  # Evitar que la imagen se recolecte por el recolector de basura de Python
+    """
 
 def main() -> None:
     
@@ -187,13 +208,18 @@ def main() -> None:
     lista_posters = lista_img_posters(Headers, posters_id)
     # info_pelicula_individual = get_pelicula_por_Id(Headers, pelicula_id)
     # img_poster = get_poster_por_Id(Headers, poster_id)
+
     info_snacks = get_snacks(Headers)
     # info_proyeccion = get_proyeccion(Headers, pelicula_id)
+
     info_cines = get_cines(Headers)
     ubicaciones = obtener_ubicaciones(info_cines)
     ventana_ubicaciones = crear_ventana_ubicaciones()
+
     botones_ubicacion(ventana_ubicaciones, ubicaciones)
-    # mostrar_posters(lista_posters, ventana_ubicaciones)
+
+    mostrar_posters(lista_posters, ventana_ubicaciones)
+
     ventana_ubicaciones.mainloop()
     # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
     # lista_pelis_en_cine: list = [diccionario["has_movies"] for diccionario in info_pelis_en_cine]
