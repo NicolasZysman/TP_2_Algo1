@@ -182,21 +182,6 @@ def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
         boton = tk.Button(ventana_ubicaciones, image=tk_imagen)
         boton.grid(row=3, column=2)
 
-
-    """
-    for i, poster in enumerate(lista_posters):
-        poster_data = poster.split(',')[1]
-        poster_bytes = base64.b64decode(poster_data)
-
-        imagen = Image.open(BytesIO(poster_bytes))
-        tk_imagen = ImageTk.PhotoImage(imagen)
-        
-        # Crear una etiqueta para mostrar la imagen
-        etiqueta = tk.Label(ventana_ubicaciones, image=tk_imagen)
-        etiqueta.grid(row=i+1, column=0, padx=10, pady=10)  # Ajustar la posición y el espaciado según sea necesario
-        etiqueta.image = tk_imagen  # Evitar que la imagen se recolecte por el recolector de basura de Python
-    """
-
 def main() -> None:
     
     Headers = autorizacion()
