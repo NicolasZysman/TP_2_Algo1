@@ -188,7 +188,13 @@ def crear_ventana_ubicaciones() -> None:
 
     return ventana_ubicaciones
 
-# def obtener_id_pelicula_por_nombre():
+# def obtener_id_poster_por_nombre(nombre_pelicula: str) -> str:
+
+#     dict_peliculas: dict = get_peliculas()
+
+#     for peli in dict_peliculas:
+#         if nombre_pelicula == peli["name"]:
+#             return peli["poster_id"]
 
 
 def onbutton_click(cine_id: int) -> int:
@@ -203,6 +209,9 @@ def onbutton_click(cine_id: int) -> int:
 
     entrada_busqueda_peli = tk.Entry(ventana_peliculas)
     entrada_busqueda_peli.pack(pady = 10)
+    retorno_busqueda_peli: str = entrada_busqueda_peli.get()
+
+    # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
 
     boton_busqueda = tk.Button(ventana_peliculas, text = "Buscar pelicula...") # command = lambda: mostrar_pelicula_en_cine(ventana_peliculas, cine_id, get_entry)
     boton_busqueda.pack()
@@ -211,8 +220,6 @@ def onbutton_click(cine_id: int) -> int:
 
 
 def main() -> None:
-    
-    Headers = autorizacion()
 
     info_peliculas = get_peliculas()
     # posters_id = lista_poster_id(info_peliculas)
