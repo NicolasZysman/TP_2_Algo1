@@ -7,6 +7,7 @@ import cv2
 from io import BytesIO
 import base64
 
+
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 
 
@@ -17,10 +18,12 @@ def autorizacion() -> dict:
     return Headers
 
 
-def get_peliculas(Headers: dict) -> list[dict]:
+def get_peliculas() -> list[dict]:
+
+    header = autorizacion()
 
     try:
-        respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/movies", headers=Headers)
+        respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/movies", headers = header)
         respuesta.raise_for_status() # Esto es necesario para que tambien agarre los errores HTTP
     except requests.exceptions.RequestException as e:
         raise SystemExit(e) # Termina el programa y muestra el error
@@ -30,10 +33,12 @@ def get_peliculas(Headers: dict) -> list[dict]:
     return info_peliculas
 
 
-def get_pelicula_por_Id(Headers: dict, pelicula_id: int) -> dict:
+def get_pelicula_por_Id(pelicula_id: int) -> dict:
+
+    header = autorizacion()
 
     try:
-        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/movies/{pelicula_id}", headers=Headers)
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/movies/{pelicula_id}", headers = header)
         respuesta.raise_for_status()
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
@@ -43,10 +48,12 @@ def get_pelicula_por_Id(Headers: dict, pelicula_id: int) -> dict:
     return info_pelicula_individual
 
 
-def get_poster_por_Id(Headers: dict, poster_id: int) -> dict:
+def get_poster_por_Id(poster_id: int) -> dict:
+
+    header = autorizacion()
 
     try:
-        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/posters/{poster_id}", headers=Headers)
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/posters/{poster_id}", headers = header)
         respuesta.raise_for_status()
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
@@ -55,22 +62,25 @@ def get_poster_por_Id(Headers: dict, poster_id: int) -> dict:
 
     return img_poster
 
-def lista_img_posters(Headers: dict, posters: list) -> list:
+
+def lista_img_posters(posters: list) -> list:
     
     lista_dict_posters: list[dict] = []
 
     for poster_id in posters:
-        lista_dict_posters.append(get_poster_por_Id(Headers, poster_id))
+        lista_dict_posters.append(get_poster_por_Id(poster_id))
     
     lista_str_posters: list[str] = [diccionario["poster_image"] for diccionario in lista_dict_posters]
     
     return lista_str_posters
 
 
-def get_snacks(Headers: dict) -> dict:
+def get_snacks() -> dict:
+
+    header = autorizacion()
 
     try:
-        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/snacks", headers=Headers)
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/snacks", headers = header)
         respuesta.raise_for_status()
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
@@ -80,10 +90,12 @@ def get_snacks(Headers: dict) -> dict:
     return info_snacks
 
 
-def get_proyeccion(Headers: dict, pelicula_id: int) -> list:
+def get_proyeccion(pelicula_id: int) -> list:
+
+    header = autorizacion()
 
     try:
-        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/movies/{pelicula_id}/cinemas", headers=Headers)
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/movies/{pelicula_id}/cinemas", headers = header)
         respuesta.raise_for_status()
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
@@ -93,10 +105,12 @@ def get_proyeccion(Headers: dict, pelicula_id: int) -> list:
     return info_proyeccion
 
 
-def get_cines(Headers: dict) -> list[dict]:
+def get_cines() -> list[dict]:
+
+    header = autorizacion()
 
     try:
-        respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/cinemas", headers=Headers)
+        respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/cinemas", headers = header)
         respuesta.raise_for_status()
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
@@ -106,10 +120,12 @@ def get_cines(Headers: dict) -> list[dict]:
     return info_cines
 
 
-def get_pelis_en_cine(Headers: dict, cine_id: int) -> list[dict]:
+def get_pelis_en_cine(cine_id: int) -> list[dict]:
+
+    header = autorizacion()
 
     try:
-        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/cinemas/{cine_id}/movies", headers=Headers)
+        respuesta = requests.get(f"http://vps-3701198-x.dattaweb.com:4000/cinemas/{cine_id}/movies", headers = header)
         respuesta.raise_for_status()
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
@@ -129,32 +145,13 @@ def obtener_ubicaciones(cines: dict) -> list[str]:
     
     return lista_ubicaciones
 
+
 def lista_poster_id(peliculas: list) -> list[int]:
 
     poster_id = [diccionario["poster_id"] for diccionario in peliculas]
     print(poster_id)
 
     return poster_id
-
-
-def onbutton_click(cine_id: int) -> int:
-
-    #Hay que hacer que cambie de pagina a la pagina principal con todas las peliculas   
-
-    ventana_peliculas = tk.Toplevel()
-    ventana_peliculas.geometry("1000x500")
-
-    portada_1 = tk.Button(ventana_peliculas, text="Pelicula 1", width=50, borderwidth=5, command=ventana_peliculas.destroy)
-    portada_1.pack()
-
-    return cine_id
-
-def crear_ventana_ubicaciones() -> None:
-
-    ventana_ubicaciones = tk.Tk(className = "Cartelera")
-    ventana_ubicaciones.geometry("500x500")
-
-    return ventana_ubicaciones
 
 
 def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
@@ -165,6 +162,7 @@ def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
     
     salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
     salir.grid(row = 0, column = (i + 1))
+
 
 def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
 
@@ -182,22 +180,52 @@ def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
         boton = tk.Button(ventana_ubicaciones, image=tk_imagen)
         boton.grid(row=3, column=2)
 
+
+def crear_ventana_ubicaciones() -> None:
+
+    ventana_ubicaciones = tk.Tk(className = "Cartelera")
+    ventana_ubicaciones.geometry("500x500")
+
+    return ventana_ubicaciones
+
+# def obtener_id_pelicula_por_nombre():
+
+
+def onbutton_click(cine_id: int) -> int:
+
+    #Hay que hacer que cambie de pagina a la pagina principal con todas las peliculas   
+
+    ventana_peliculas = tk.Toplevel()
+    ventana_peliculas.geometry("1000x500")
+
+    portada_1 = tk.Button(ventana_peliculas, text="Pelicula 1", width=50, borderwidth=5, command=ventana_peliculas.destroy)
+    portada_1.pack()
+
+    entrada_busqueda_peli = tk.Entry(ventana_peliculas)
+    entrada_busqueda_peli.pack(pady = 10)
+
+    boton_busqueda = tk.Button(ventana_peliculas, text = "Buscar pelicula...") # command = lambda: mostrar_pelicula_en_cine(ventana_peliculas, cine_id, get_entry)
+    boton_busqueda.pack()
+
+    return cine_id
+
+
 def main() -> None:
     
     Headers = autorizacion()
 
-    info_peliculas = get_peliculas(Headers)
+    info_peliculas = get_peliculas()
     # posters_id = lista_poster_id(info_peliculas)
     posters_id = [1, 2, 3, 4, 5, 9, 10, 14]
 
-    lista_posters = lista_img_posters(Headers, posters_id)
+    lista_posters = lista_img_posters(posters_id)
     # info_pelicula_individual = get_pelicula_por_Id(Headers, pelicula_id)
     # img_poster = get_poster_por_Id(Headers, poster_id)
 
-    info_snacks = get_snacks(Headers)
+    info_snacks = get_snacks()
     # info_proyeccion = get_proyeccion(Headers, pelicula_id)
 
-    info_cines = get_cines(Headers)
+    info_cines = get_cines()
     ubicaciones = obtener_ubicaciones(info_cines)
     ventana_ubicaciones = crear_ventana_ubicaciones()
 
