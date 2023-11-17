@@ -181,6 +181,13 @@ def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
         boton.grid(row=3, column=2)
 
 
+def crear_ventana_ubicaciones() -> None:
+
+    ventana_ubicaciones = tk.Tk(className = "Cartelera")
+    ventana_ubicaciones.geometry("500x500")
+
+    return ventana_ubicaciones
+
 # def obtener_id_poster_por_nombre(nombre_pelicula: str) -> str:
 
 #     dict_peliculas: dict = get_peliculas()
@@ -212,22 +219,30 @@ def onbutton_click(cine_id: int) -> int:
     return cine_id
 
 
+def main() -> None:
 
-class cartelera(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.wm_title("Cartelera")
-        self.geometry("500x500")
+    info_peliculas = get_peliculas()
+    # posters_id = lista_poster_id(info_peliculas)
+    posters_id = [1, 2, 3, 4, 5, 9, 10, 14]
 
-        posters_id = [1, 2, 3, 4, 5, 9, 10, 14]
+    lista_posters = lista_img_posters(posters_id)
+    # info_pelicula_individual = get_pelicula_por_Id(Headers, pelicula_id)
+    # img_poster = get_poster_por_Id(Headers, poster_id)
 
-        lista_posters = lista_img_posters(posters_id)
-        info_cines = get_cines()
-        ubicaciones = obtener_ubicaciones(info_cines)
+    info_snacks = get_snacks()
+    # info_proyeccion = get_proyeccion(Headers, pelicula_id)
 
-        botones_ubicacion(self, ubicaciones)
-        mostrar_posters(lista_posters, self)
-        
+    info_cines = get_cines()
+    ubicaciones = obtener_ubicaciones(info_cines)
+    ventana_ubicaciones = crear_ventana_ubicaciones()
 
-cartelera = cartelera()
-cartelera.mainloop()
+    botones_ubicacion(ventana_ubicaciones, ubicaciones)
+
+    mostrar_posters(lista_posters, ventana_ubicaciones)
+
+    ventana_ubicaciones.mainloop()
+    # info_pelis_en_cine = get_pelis_en_cine(Headers, cine_id)
+    # lista_pelis_en_cine: list = [diccionario["has_movies"] for diccionario in info_pelis_en_cine]
+    # print(info_pelis_en_cine)
+    
+main()
