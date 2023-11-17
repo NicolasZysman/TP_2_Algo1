@@ -227,7 +227,7 @@ class cartelera(tk.Tk):
 
         botones_ubicacion(self, ubicaciones)
         mostrar_posters(lista_posters, self)
-    
+        
 
 cartelera = cartelera()
 cartelera.mainloop()
