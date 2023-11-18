@@ -76,13 +76,16 @@ class SidePage(tk.Frame):
             command=lambda: controller.show_frame(MainPage),
         )
         switch_window_button.pack(side="bottom", fill=tk.X)
-        
-        test_button = tk.Button(
+
+        entry = tk.Entry(self)
+        entry.pack(padx=10, pady=10, fill=tk.X)
+
+        entry_button = tk.Button(
             self,
-            text="Test",
-            command=lambda: test(),
+            text="OK",
+            command=lambda: (test(entry.get()), entry.delete(0, tk.END)), # pasa el texto a la funcion y despues lo borra
         )
-        test_button.pack(side="bottom", fill=tk.X)
+        entry_button.pack(padx=10, pady=10, fill=tk.X)
 
 
 class SidePage1(tk.Frame):
@@ -105,8 +108,8 @@ class SidePage1(tk.Frame):
         )
         test_button.pack(side="bottom", fill=tk.X)
 
-def test():
-    print("TEST")
+def test(n):
+    print(n)
 
 def test1():
     print("PRUEBA")
