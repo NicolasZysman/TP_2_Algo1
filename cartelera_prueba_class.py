@@ -154,16 +154,6 @@ def lista_poster_id(peliculas: list) -> list[int]:
     return poster_id
 
 
-def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
-    
-    for i,ubicacion in enumerate(ubicaciones):
-        boton = tk.Button(ventana_ubicaciones, text=ubicacion, command=lambda e= i+1: onbutton_click(e))
-        boton.grid(row=0, column=i)
-    
-    salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
-    salir.grid(row = 0, column = (i + 1))
-
-
 def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
 
     for i, poster in enumerate(lista_posters):
@@ -215,19 +205,31 @@ def onbutton_click(cine_id: int) -> int:
 
 class cartelera(tk.Tk):
     def __init__(self):
-        super().__init__()
+        tk.Tk.__init__(self)
         self.wm_title("Cartelera")
-        self.geometry("500x500")
+        self.geometry("465x500")
 
         posters_id = [1, 2, 3, 4, 5, 9, 10, 14]
-
         lista_posters = lista_img_posters(posters_id)
         info_cines = get_cines()
         ubicaciones = obtener_ubicaciones(info_cines)
 
-        botones_ubicacion(self, ubicaciones)
-        mostrar_posters(lista_posters, self)
+        def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
+    
+            for i,ubicacion in enumerate(ubicaciones):
+                boton = tk.Button(ventana_ubicaciones, text=ubicacion, command = lambda e = i+1: cambiar_cine_ubicacion)
+                boton.grid(row=0, column=i)
+            
+            salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
+            salir.grid(row = 0, column = (i + 1))
         
+        def cambiar_cine_ubicacion(self):
+            cambio_ventana = pelis_ubicacion()
+            cambio_ventana.mainloop()
 
+        botones_ubicacion(self,ubicaciones)
+
+class pelis_ubicacion:
+    pass
 cartelera = cartelera()
 cartelera.mainloop()
