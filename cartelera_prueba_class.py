@@ -154,7 +154,7 @@ def lista_poster_id(peliculas: list) -> list[int]:
     return poster_id
 
 
-def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
+def mostrar_posters(lista_posters: list, ventana_cartelera) -> None:
 
     for i, poster in enumerate(lista_posters):
         poster = (poster.replace('data:image/jpeg;base64,', ''))
@@ -163,12 +163,13 @@ def mostrar_posters(lista_posters: list, ventana_ubicaciones) -> None:
         img = Image.open(BytesIO(poster_bytes))
         tk_imagen = ImageTk.PhotoImage(img)
 
-        etiqueta = tk.Label(ventana_ubicaciones, image=tk_imagen)
-        etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
+        etiqueta = tk.Label(ventana_cartelera, image=tk_imagen)
+        # etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
         etiqueta.image = tk_imagen 
 
-        boton = tk.Button(ventana_ubicaciones, image=tk_imagen)
-        boton.grid(row=3, column=2)
+        boton = tk.Button(ventana_cartelera, image=tk_imagen)
+        boton.pack()
+        # boton.grid(row=3, column=2)
 
 
 # def obtener_id_poster_por_nombre(nombre_pelicula: str) -> str:
@@ -202,7 +203,9 @@ def onbutton_click(cine_id: int) -> int:
     return cine_id
 
 class ventanas(tk.Tk):
+    
     def __init__(self, *args, **kwargs):
+        
         tk.Tk.__init__(self, *args, **kwargs)
         self.wm_title("Cinepolis")
         self.geometry("500x500")
@@ -214,70 +217,68 @@ class ventanas(tk.Tk):
         self.frames: dict = {}
         
         for F in (Ubicacion, Cartelera):
+            
             frame = F(container, self)
-
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(Ubicacion)
 
     def show_frame(self, cont):
+        
         frame = self.frames[cont]
         frame.tkraise()
 
 class Ubicacion(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
     
-        switch_window_button1 = tk.Button(
-                self,
-                text="Leer QR",
-                command=lambda: controller.show_frame(Cartelera),
-            )
-        switch_window_button1.pack(side="bottom", fill=tk.X)
-
-class Cartelera(tk.Frame):
     def __init__(self, parent, controller):
+        
         tk.Frame.__init__(self, parent)
 
-        ubicaciones = ['Caballito', 'Abasto', 'Puerto Madero', 'Villa del parque', 'Palermo', 'Liniers', 'Olivos']
+        info_cines = get_cines()
+        ubicaciones = obtener_ubicaciones(info_cines)
 
         for i,ubicacion in enumerate(ubicaciones):
-                boton = tk.Button(self, text=ubicacion, command = lambda: controller.show_frame(Ubicacion))
+                
+                boton = tk.Button(
+                    self,
+                    text=ubicacion,
+                    command = lambda: controller.show_frame(Cartelera)
+                )
                 boton.grid(row=0, column=i)
-    # def __init__(self):
-    #     tk.Tk.__init__(self)
-        # self.wm_title("Cartelera")
-        # self.geometry("465x500")
 
-        # posters_id = [1, 2, 3, 4, 5, 9, 10, 14]
-        # lista_posters = lista_img_posters(posters_id)
-        # info_cines = get_cines()
-        # ubicaciones = obtener_ubicaciones(info_cines)
-
-        # def botones_ubicacion(ventana_ubicaciones, ubicaciones: list) -> None:
+class Cartelera(tk.Frame):
     
-        #     for i,ubicacion in enumerate(ubicaciones):
-        #         boton = tk.Button(ventana_ubicaciones, text=ubicacion, command = lambda e = i+1: print("pepe"))
-        #         boton.grid(row=0, column=i)
-            
-        #     salir = tk.Button(ventana_ubicaciones, text = "Salir", command = ventana_ubicaciones.quit)
-        #     salir.grid(row = 0, column = (i + 1))
+    def __init__(self, parent, controller):
         
-        # def cambiar_cine_ubicacion(self):
-        #     cambio_ventana = pelis_ubicacion()
-        #     cambio_ventana.mainloop()
+        tk.Frame.__init__(self, parent)
 
-        # botones_ubicacion(self,ubicaciones)
+        portada_1 = tk.Button(
+            self, 
+            text="Pelicula 1", 
+            width=50, 
+            borderwidth=5, 
+            command = self.destroy
+        )
+        portada_1.pack()
 
-# class pelis_ubicacion:
-#     pass
-# cartelera = cartelera()
-# cartelera.mainloop()
+        entrada_busqueda_peli = tk.Entry(self)
+        entrada_busqueda_peli.pack(pady = 10)
+        retorno_busqueda_peli: str = entrada_busqueda_peli.get()
+
+        # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
+
+        boton_busqueda = tk.Button(self, text = "Buscar pelicula...") # command = lambda: mostrar_pelicula_en_cine(ventana_peliculas, cine_id, get_entry)
+        boton_busqueda.pack()
+
+        posters_id = [1, 2, 3, 4, 5, 9, 10, 14] #Hardcodeado
+        lista_posters = lista_img_posters(posters_id)
+        mostrar_posters(lista_posters, self) 
+    
 
 def main():
-    if __name__ == "__main__":
-        testObj = ventanas()
-        testObj.mainloop()
+        
+    app = ventanas()
+    app.mainloop()
 
 main()
