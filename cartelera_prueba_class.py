@@ -146,12 +146,6 @@ def obtener_ubicaciones(cines: dict) -> list[str]:
     return lista_ubicaciones
 
 
-def lista_poster_id(peliculas: list) -> list[int]:
-
-    poster_id = [diccionario["poster_id"] for diccionario in peliculas]
-    print(poster_id)
-
-    return poster_id
 
 
 def mostrar_posters(lista_posters: list, ventana_cartelera) -> None:
@@ -180,6 +174,26 @@ def mostrar_posters(lista_posters: list, ventana_cartelera) -> None:
 #         if nombre_pelicula == peli["name"]:
 #             return peli["poster_id"]
 
+def id_pelis_en_cine() -> list:
+    
+    cine_id = 5
+    pelis_en_cine = get_pelis_en_cine(cine_id)
+
+    for diccionario in pelis_en_cine:
+        lista_pelis_en_cine = diccionario["has_movies"]
+
+    return lista_pelis_en_cine
+
+def lista_poster_id(peliculas: list) -> list[int]:
+
+    posters_id = []
+
+    for pelicula in peliculas:
+        
+        info_pelicula = get_pelicula_por_Id(pelicula)
+        posters_id.append(info_pelicula["poster_id"])
+    
+    return posters_id
 
 def onbutton_click(cine_id: int) -> int:
 
@@ -253,15 +267,6 @@ class Cartelera(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
-        portada_1 = tk.Button(
-            self, 
-            text="Pelicula 1", 
-            width=50, 
-            borderwidth=5, 
-            command = self.destroy
-        )
-        portada_1.pack()
-
         entrada_busqueda_peli = tk.Entry(self)
         entrada_busqueda_peli.pack(pady = 10)
         retorno_busqueda_peli: str = entrada_busqueda_peli.get()
@@ -271,10 +276,17 @@ class Cartelera(tk.Frame):
         boton_busqueda = tk.Button(self, text = "Buscar pelicula...") # command = lambda: mostrar_pelicula_en_cine(ventana_peliculas, cine_id, get_entry)
         boton_busqueda.pack()
 
-        posters_id = [1, 2, 3, 4, 5, 9, 10, 14] #Hardcodeado
+        lista_pelis_en_cine = id_pelis_en_cine()#habria que pasarle el id del cine(no se me ocurre como)
+        posters_id = lista_poster_id(lista_pelis_en_cine)
         lista_posters = lista_img_posters(posters_id)
         mostrar_posters(lista_posters, self) 
-    
+
+
+class Pelicula(tk.Frame):
+
+    def __init__(self, parent, controller):
+        
+        tk.Frame.__init__(self, parent)
 
 def main():
         
