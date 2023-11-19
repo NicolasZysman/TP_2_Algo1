@@ -145,27 +145,6 @@ def obtener_ubicaciones(cines: dict) -> list[str]:
     
     return lista_ubicaciones
 
-
-
-
-def mostrar_posters(lista_posters: list, ventana_cartelera) -> None:
-
-    for i, poster in enumerate(lista_posters):
-        poster = (poster.replace('data:image/jpeg;base64,', ''))
-        poster_bytes = base64.b64decode(poster)
-
-        img = Image.open(BytesIO(poster_bytes))
-        tk_imagen = ImageTk.PhotoImage(img)
-
-        etiqueta = tk.Label(ventana_cartelera, image=tk_imagen)
-        # etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
-        etiqueta.image = tk_imagen 
-
-        boton = tk.Button(ventana_cartelera, image=tk_imagen)
-        boton.pack()
-        # boton.grid(row=3, column=2)
-
-
 # def obtener_id_poster_por_nombre(nombre_pelicula: str) -> str:
 
 #     dict_peliculas: dict = get_peliculas()
@@ -216,6 +195,16 @@ def onbutton_click(cine_id: int) -> int:
 
     return cine_id
 
+def convertir_imagen(poster):
+
+    poster = (poster.replace('data:image/jpeg;base64,', ''))
+    poster_bytes = base64.b64decode(poster)
+
+    img = Image.open(BytesIO(poster_bytes))
+    tk_imagen = ImageTk.PhotoImage(img)
+
+    return tk_imagen
+
 class ventanas(tk.Tk):
     
     def __init__(self, *args, **kwargs):
@@ -230,7 +219,7 @@ class ventanas(tk.Tk):
 
         self.frames: dict = {}
         
-        for F in (Ubicacion, Cartelera):
+        for F in (Ubicacion, Cartelera, Pelicula):
             
             frame = F(container, self)
             self.frames[F] = frame
@@ -279,7 +268,20 @@ class Cartelera(tk.Frame):
         lista_pelis_en_cine = id_pelis_en_cine()#habria que pasarle el id del cine(no se me ocurre como)
         posters_id = lista_poster_id(lista_pelis_en_cine)
         lista_posters = lista_img_posters(posters_id)
-        mostrar_posters(lista_posters, self) 
+
+
+        for _, poster in enumerate(lista_posters):
+
+            tk_imagen = convertir_imagen(poster)
+
+            etiqueta = tk.Label(self, image=tk_imagen)
+            # etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
+            etiqueta.image = tk_imagen 
+
+            boton = tk.Button(self, image=tk_imagen, command = lambda: controller.show_frame(Pelicula))
+            boton.pack()
+            # boton.grid(row=3, column=2)
+
 
 
 class Pelicula(tk.Frame):
@@ -287,6 +289,39 @@ class Pelicula(tk.Frame):
     def __init__(self, parent, controller):
         
         tk.Frame.__init__(self, parent)
+
+        peli_id = 8
+        info_peli = get_pelicula_por_Id(peli_id)
+        
+        poster_id = info_peli["poster_id"]
+        dict_poster = get_poster_por_Id(poster_id)
+        poster = dict_poster["poster_image"]
+        tk_imagen = convertir_imagen(poster)
+
+        etiqueta = tk.Label(self, image=tk_imagen)
+        etiqueta.image = tk_imagen 
+        etiqueta.pack()
+
+        nombre = info_peli["name"]
+        tk.Label(self, text=nombre).pack()
+
+        # sinopsis = info_peli["synopsis"] Da error no se porque
+        # tk.Label(self, text=sinopsis).pack()
+
+        genero = info_peli["gender"]
+        tk.Label(self, text=genero).pack()
+
+        duracion = info_peli["duration"]
+        tk.Label(self, text=duracion).pack()
+        
+        actores = info_peli["actors"]
+        tk.Label(self, text=actores).pack()
+
+        director = info_peli["directors"]
+        tk.Label(self, text=director).pack()
+
+        pg_rating = info_peli["rating"]
+        tk.Label(self, text=pg_rating).pack()
 
 def main():
         
