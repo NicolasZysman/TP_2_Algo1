@@ -205,6 +205,18 @@ def convertir_imagen(poster):
 
     return tk_imagen
 
+
+def obtener_ubicaciones_pelicula(info_proyeccion: list, ubicaciones: list[str]) -> list:
+    
+    peli_en_cine = []
+        
+    for cine in info_proyeccion:
+        int_cine = int(cine)
+        nombre_cine = ubicaciones[int_cine - 1]
+        peli_en_cine.append(nombre_cine)
+
+    return peli_en_cine
+
 class ventanas(tk.Tk):
     
     def __init__(self, *args, **kwargs):
@@ -219,7 +231,7 @@ class ventanas(tk.Tk):
 
         self.frames: dict = {}
         
-        for F in (Ubicacion, Cartelera, Pelicula):
+        for F in (Ubicacion, Cartelera, Pelicula, Reserva):
             
             frame = F(container, self)
             self.frames[F] = frame
@@ -246,7 +258,7 @@ class Ubicacion(tk.Frame):
                 boton = tk.Button(
                     self,
                     text=ubicacion,
-                    command = lambda: controller.show_frame(Cartelera)
+                    command = lambda: [print(ubicacion), controller.show_frame(Cartelera)]
                 )
                 boton.grid(row=0, column=i)
 
@@ -278,10 +290,13 @@ class Cartelera(tk.Frame):
             # etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
             etiqueta.image = tk_imagen 
 
-            boton = tk.Button(self, image=tk_imagen, command = lambda: controller.show_frame(Pelicula))
+            boton = tk.Button(
+                self, 
+                image=tk_imagen, 
+                command = lambda: controller.show_frame(Pelicula)
+            )
             boton.pack()
             # boton.grid(row=3, column=2)
-
 
 
 class Pelicula(tk.Frame):
@@ -291,12 +306,19 @@ class Pelicula(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         peli_id = 8
+        cine_id = 5
         info_peli = get_pelicula_por_Id(peli_id)
-        
+        info_cines = get_cines()
+        info_proyeccion = get_proyeccion(peli_id)
+        ubicaciones = obtener_ubicaciones(info_cines)
+
+        peli_en_cine = obtener_ubicaciones_pelicula(info_proyeccion, ubicaciones)
+
         poster_id = info_peli["poster_id"]
         dict_poster = get_poster_por_Id(poster_id)
         poster = dict_poster["poster_image"]
         tk_imagen = convertir_imagen(poster)
+
 
         etiqueta = tk.Label(self, image=tk_imagen)
         etiqueta.image = tk_imagen 
@@ -322,6 +344,33 @@ class Pelicula(tk.Frame):
 
         pg_rating = info_peli["rating"]
         tk.Label(self, text=pg_rating).pack()
+
+        #con el id de la pelicula traer el id de los cines donde se proyecta
+        #con los ids meterlos en una lista y mostrarlos
+        tk.Label(self, text=peli_en_cine).pack()
+
+        asientos = info_cines[cine_id - 1]["available_seats"]
+        
+        if(asientos > 0):
+
+            boton_reserva = tk.Button(self, text="Reservar", bg="green", command = lambda: controller.show_frame(Reserva))
+            boton_reserva.pack()
+        else:
+            tk.Label(self, text="No hay asientos disponibles", bg="red").pack()
+
+        
+        boton_volver = tk.Button(self, text="Volver", command = lambda: controller.show_frame(Cartelera))
+        boton_volver.pack()
+
+class Reserva(tk.Frame):
+    
+    def __init__(self, parent, controller):
+        
+        tk.Frame.__init__(self, parent)
+
+        tk.Label(self, bg="red").pack()
+        boton_volver = tk.Button(self, text="Volver", command = lambda: controller.show_frame(Pelicula))
+        boton_volver.pack()
 
 def main():
         
