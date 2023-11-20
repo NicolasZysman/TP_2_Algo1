@@ -268,6 +268,12 @@ class Cartelera(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
+        cine_id = 5
+        info_cines = get_cines()
+
+        ubicacion = info_cines[cine_id - 1]["location"]
+        tk.Label(self, text=ubicacion).pack()
+
         entrada_busqueda_peli = tk.Entry(self)
         entrada_busqueda_peli.pack(pady = 10)
         retorno_busqueda_peli: str = entrada_busqueda_peli.get()
