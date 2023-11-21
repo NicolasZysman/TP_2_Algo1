@@ -217,6 +217,26 @@ def obtener_ubicaciones_pelicula(info_proyeccion: list, ubicaciones: list[str]) 
 
     return peli_en_cine
 
+def imprimir_snacks(self, info_snacks):
+    iterador_fila: int = 4
+    for snack, valor in info_snacks.items():
+        iterador_columna: int = 0
+
+        mostrar_snack = tk.Label(self, text=snack)
+        mostrar_valor = tk.Label(self, text=valor)
+        sumar_carrito = tk.Button(self, text="+")
+
+        mostrar_snack.grid(row=iterador_fila, column=iterador_columna)
+        iterador_columna += 1
+
+        mostrar_valor.grid(row=iterador_fila, column=iterador_columna)
+        iterador_columna += 1
+
+        sumar_carrito.grid(row=iterador_fila, column=iterador_columna)
+        iterador_columna += 1
+
+        iterador_fila += 1
+
 class ventanas(tk.Tk):
     
     def __init__(self, *args, **kwargs):
@@ -395,10 +415,31 @@ class Reserva(tk.Frame):
         boton_random2.grid(row=2, column=1)
 
         # Punto ii
-        añadir_sanck = tk.Button(self, text="Añadir Snack", bg="orange")
+        añadir_sanck = tk.Button(self, text="Añadir Snack", bg="orange", command = lambda: imprimir_snacks(self, info_snacks))
         añadir_sanck.grid(row=3, column=0)
 
         info_snacks: dict = get_snacks()
+
+        """
+        iterador_fila: int = 4
+        for snack, valor in info_snacks.items():
+            iterador_columna: int = 0
+
+            mostrar_snack = tk.Label(self, text=snack)
+            mostrar_valor = tk.Label(self, text=valor)
+            sumar_carrito = tk.Button(self, text="+")
+
+            mostrar_snack.grid(row=iterador_fila, column=iterador_columna)
+            iterador_columna += 1
+
+            mostrar_valor.grid(row=iterador_fila, column=iterador_columna)
+            iterador_columna += 1
+
+            sumar_carrito.grid(row=iterador_fila, column=iterador_columna)
+            iterador_columna += 1
+
+            iterador_fila += 1
+        """
 
         # Hay que guardar la informacion en una variable y llevarla a
         # la clase Checkout
@@ -411,7 +452,7 @@ class Reserva(tk.Frame):
         agregar.grid(row=3, column=1)
 
         boton_volver = tk.Button(self, text="Volver", bg="red", command = lambda: controller.show_frame(Pelicula))
-        boton_volver.grid(row=4, column=0)
+        boton_volver.grid(row=11, column=0)
 
 def main():
         
