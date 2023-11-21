@@ -232,7 +232,7 @@ class ventanas(tk.Tk):
         self.frames: dict = {}
         
         for F in (Ubicacion, Cartelera, Pelicula, Reserva):
-            
+
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -374,9 +374,44 @@ class Reserva(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
-        tk.Label(self, bg="red").pack()
-        boton_volver = tk.Button(self, text="Volver", command = lambda: controller.show_frame(Pelicula))
-        boton_volver.pack()
+        # Punto i
+
+        etiqueta_1 = tk.Label(self, text="Ingrese la cantidad de entradas")
+        etiqueta_1.grid(row=0, column=0)
+
+        seleccionar_cantidad_entradas = tk.Entry(self, width=35, borderwidth=2)
+        seleccionar_cantidad_entradas.grid(row=1, column=0)
+
+        etiqueta_2 = tk.Label(self, text="Valor unitario por entrada")
+        etiqueta_2.grid(row=0, column=1)
+
+        ingresar_valor = tk.Entry(self, width=35, borderwidth=2)
+        ingresar_valor.grid(row=1, column=1)
+
+        boton_random1 = tk.Button(self, text="Ingresar: ", command = lambda: print(seleccionar_cantidad_entradas.get()))
+        boton_random2 = tk.Button(self, text="Ingresar: ", command = lambda: print(ingresar_valor.get()))
+
+        boton_random1.grid(row=2, column=0)
+        boton_random2.grid(row=2, column=1)
+
+        # Punto ii
+        añadir_sanck = tk.Button(self, text="Añadir Snack", bg="orange")
+        añadir_sanck.grid(row=3, column=0)
+
+        info_snacks: dict = get_snacks()
+
+        # Hay que guardar la informacion en una variable y llevarla a
+        # la clase Checkout
+        agregar = tk.Button(
+            self, 
+            text="Añadir al carro", 
+            bg="green" # , 
+            # command= lambda: agregar_carrito(seleccionar_cantidad_entradas.get(), ingresar_valor.get())
+        )
+        agregar.grid(row=3, column=1)
+
+        boton_volver = tk.Button(self, text="Volver", bg="red", command = lambda: controller.show_frame(Pelicula))
+        boton_volver.grid(row=4, column=0)
 
 def main():
         
