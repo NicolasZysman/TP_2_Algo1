@@ -220,15 +220,39 @@ def obtener_ubicaciones_pelicula(info_proyeccion: list, ubicaciones: list[str]) 
 
     return peli_en_cine
 
+def suma_total(acumulador_precios: list):
+    precio_total: float = 0
+    contador_entradas: int = 0
+    cantidad_entradas: int = 0
+    precio_unitario: int = 0
+    precio_entradas: int = 0
 
-def imprimir_snacks(self, info_snacks):
+    for gasto in acumulador_precios:
+
+        if contador_entradas == 0:
+            cantidad_entradas = int(gasto)
+            contador_entradas += 1
+
+        elif contador_entradas == 1:
+            precio_unitario = int(gasto)
+
+            precio_entradas = cantidad_entradas * precio_unitario
+            precio_total += float(precio_entradas)
+            contador_entradas += 1
+
+        else:       
+            precio_total += float(gasto)
+
+    print("Tenes que pagar ", precio_total, " pesos")
+
+def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list):
     iterador_fila: int = 4
     for snack, valor in info_snacks.items():
         iterador_columna: int = 0
 
         mostrar_snack = tk.Label(self, text=snack)
-        mostrar_valor = tk.Label(self, text=valor)
-        sumar_carrito = tk.Button(self, text="+")
+        mostrar_valor = tk.Button(self, text="Pagar " + valor, command = lambda: acumulador_precios.append(valor))
+        # sumar_carrito = tk.Button(self, text="+")
 
         mostrar_snack.grid(row=iterador_fila, column=iterador_columna)
         iterador_columna += 1
@@ -236,11 +260,43 @@ def imprimir_snacks(self, info_snacks):
         mostrar_valor.grid(row=iterador_fila, column=iterador_columna)
         iterador_columna += 1
 
-        sumar_carrito.grid(row=iterador_fila, column=iterador_columna)
-        iterador_columna += 1
+        # sumar_carrito.grid(row=iterador_fila, column=iterador_columna)
+        # iterador_columna += 1
 
         iterador_fila += 1
 
+def añadir_botones_reserva(self, acumulador_precios: list):
+    añadir_sanck = tk.Button(self, text="Añadir Snack", bg="orange", command = lambda: imprimir_snacks(self, info_snacks, acumulador_precios))
+    añadir_sanck.grid(row=3, column=0)
+
+    info_snacks: dict = get_snacks()
+
+    agregar = tk.Button(
+        self, 
+        text="Añadir al carro", 
+        bg="green" , 
+        command = lambda: suma_total(acumulador_precios)
+    )
+
+    agregar.grid(row=11, column=1)
+
+def ingresar_valor_unitario(self, acumulador_precios: list):
+    etiqueta_2 = tk.Label(self, text="Valor unitario por entrada")
+    etiqueta_2.grid(row=0, column=1)
+    
+    ingresar_valor = tk.Entry(self, width=35, borderwidth=2)
+    ingresar_valor.grid(row=1, column=1)
+
+    boton_random2 = tk.Button(
+            self, 
+            text="Ingresar", 
+            command = lambda: [
+                acumulador_precios.append(ingresar_valor.get()),
+                añadir_botones_reserva(self, acumulador_precios)
+            ]
+        )
+    
+    boton_random2.grid(row=2, column=1)
 
 class ventanas(tk.Tk):
     
@@ -418,7 +474,7 @@ class Reserva(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
-        # Punto i
+        acumulador_precios: list = []
 
         etiqueta_1 = tk.Label(self, text="Ingrese la cantidad de entradas")
         etiqueta_1.grid(row=0, column=0)
@@ -426,54 +482,15 @@ class Reserva(tk.Frame):
         seleccionar_cantidad_entradas = tk.Entry(self, width=35, borderwidth=2)
         seleccionar_cantidad_entradas.grid(row=1, column=0)
 
-        etiqueta_2 = tk.Label(self, text="Valor unitario por entrada")
-        etiqueta_2.grid(row=0, column=1)
-
-        ingresar_valor = tk.Entry(self, width=35, borderwidth=2)
-        ingresar_valor.grid(row=1, column=1)
-
-        boton_random1 = tk.Button(self, text="Ingresar: ", command = lambda: print(seleccionar_cantidad_entradas.get()))
-        boton_random2 = tk.Button(self, text="Ingresar: ", command = lambda: print(ingresar_valor.get()))
+        boton_random1 = tk.Button(
+            self, 
+            text="Ingresar", 
+            command = lambda: [
+                acumulador_precios.append(seleccionar_cantidad_entradas.get()),
+                ingresar_valor_unitario(self, acumulador_precios)]
+        )
 
         boton_random1.grid(row=2, column=0)
-        boton_random2.grid(row=2, column=1)
-
-        # Punto ii
-        añadir_sanck = tk.Button(self, text="Añadir Snack", bg="orange", command = lambda: imprimir_snacks(self, info_snacks))
-        añadir_sanck.grid(row=3, column=0)
-
-        info_snacks: dict = get_snacks()
-
-        """
-        iterador_fila: int = 4
-        for snack, valor in info_snacks.items():
-            iterador_columna: int = 0
-
-            mostrar_snack = tk.Label(self, text=snack)
-            mostrar_valor = tk.Label(self, text=valor)
-            sumar_carrito = tk.Button(self, text="+")
-
-            mostrar_snack.grid(row=iterador_fila, column=iterador_columna)
-            iterador_columna += 1
-
-            mostrar_valor.grid(row=iterador_fila, column=iterador_columna)
-            iterador_columna += 1
-
-            sumar_carrito.grid(row=iterador_fila, column=iterador_columna)
-            iterador_columna += 1
-
-            iterador_fila += 1
-        """
-
-        # Hay que guardar la informacion en una variable y llevarla a
-        # la clase Checkout
-        agregar = tk.Button(
-            self, 
-            text="Añadir al carro", 
-            bg="green" # , 
-            # command= lambda: agregar_carrito(seleccionar_cantidad_entradas.get(), ingresar_valor.get())
-        )
-        agregar.grid(row=3, column=1)
 
         boton_volver = tk.Button(self, text="Volver", bg="red", command = lambda: controller.show_frame(Pelicula))
         boton_volver.grid(row=11, column=0)
