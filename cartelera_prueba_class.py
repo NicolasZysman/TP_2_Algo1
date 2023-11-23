@@ -163,6 +163,7 @@ def id_pelis_en_cine() -> list:
 
     return lista_pelis_en_cine
 
+
 def lista_poster_id(peliculas: list) -> list[int]:
 
     posters_id = []
@@ -173,6 +174,7 @@ def lista_poster_id(peliculas: list) -> list[int]:
         posters_id.append(info_pelicula["poster_id"])
     
     return posters_id
+
 
 def onbutton_click(cine_id: int) -> int:
 
@@ -194,6 +196,7 @@ def onbutton_click(cine_id: int) -> int:
     boton_busqueda.pack()
 
     return cine_id
+
 
 def convertir_imagen(poster):
 
@@ -322,6 +325,7 @@ class ventanas(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
+
 class Ubicacion(tk.Frame):
     
     def __init__(self, parent, controller):
@@ -340,6 +344,38 @@ class Ubicacion(tk.Frame):
                 )
                 boton.grid(row=0, column=i)
 
+
+def posters_cartelera(ventana, lista_posters, controller):
+
+    for _, poster in enumerate(lista_posters):
+
+            tk_imagen = convertir_imagen(poster)
+
+            etiqueta = tk.Label(ventana, image=tk_imagen)
+            # etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
+            etiqueta.image = tk_imagen 
+
+            boton = tk.Button(
+                ventana, 
+                image=tk_imagen, 
+                command = lambda: controller.show_frame(Pelicula)
+            )
+            boton.pack()
+            # boton.grid(row=3, column=2)
+
+
+def filtrar_busqueda(get_entry, posters_id):
+
+    peliculas_totales = get_peliculas()
+    posters_id = []
+    for p in peliculas_totales:
+        if get_entry == p["name"]:
+            posters_id.append(p["poster_id"])
+
+    print(posters_id)
+    return posters_id
+
+
 class Cartelera(tk.Frame):
     
     def __init__(self, parent, controller):
@@ -348,39 +384,24 @@ class Cartelera(tk.Frame):
 
         cine_id = 5
         info_cines = get_cines()
+        lista_pelis_en_cine = id_pelis_en_cine()#habria que pasarle el id del cine(no se me ocurre como)
+        posters_id = lista_poster_id(lista_pelis_en_cine)
+        lista_posters = lista_img_posters(posters_id)
 
         ubicacion = info_cines[cine_id - 1]["location"]
         tk.Label(self, text=ubicacion).pack()
 
         entrada_busqueda_peli = tk.Entry(self)
         entrada_busqueda_peli.pack(pady = 10)
-        retorno_busqueda_peli: str = entrada_busqueda_peli.get()
 
         # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
 
-        boton_busqueda = tk.Button(self, text = "Buscar pelicula...") # command = lambda: mostrar_pelicula_en_cine(ventana_peliculas, cine_id, get_entry)
+        boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: filtrar_busqueda(entrada_busqueda_peli.get(), posters_id)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
         boton_busqueda.pack()
 
-        lista_pelis_en_cine = id_pelis_en_cine()#habria que pasarle el id del cine(no se me ocurre como)
-        posters_id = lista_poster_id(lista_pelis_en_cine)
-        lista_posters = lista_img_posters(posters_id)
+        posters_cartelera(self, lista_posters, controller)
 
 
-        for _, poster in enumerate(lista_posters):
-
-            tk_imagen = convertir_imagen(poster)
-
-            etiqueta = tk.Label(self, image=tk_imagen)
-            # etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
-            etiqueta.image = tk_imagen 
-
-            boton = tk.Button(
-                self, 
-                image=tk_imagen, 
-                command = lambda: controller.show_frame(Pelicula)
-            )
-            boton.pack()
-            # boton.grid(row=3, column=2)
 
 
 class Pelicula(tk.Frame):
@@ -446,6 +467,7 @@ class Pelicula(tk.Frame):
         boton_volver = tk.Button(self, text="Volver", command = lambda: controller.show_frame(Cartelera))
         boton_volver.pack()
 
+
 class Reserva(tk.Frame):
     
     def __init__(self, parent, controller):
@@ -473,9 +495,10 @@ class Reserva(tk.Frame):
         boton_volver = tk.Button(self, text="Volver", bg="red", command = lambda: controller.show_frame(Pelicula))
         boton_volver.grid(row=11, column=0)
 
-def main():
-        
+
+def main():     
     app = ventanas()
     app.mainloop()
+
 
 main()

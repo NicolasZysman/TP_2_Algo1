@@ -83,7 +83,7 @@ class SidePage(tk.Frame):
         entry_button = tk.Button(
             self,
             text="OK",
-            command=lambda: (test(entry.get()), entry.delete(0, tk.END)), # pasa el texto a la funcion y despues lo borra
+            command=lambda: (guardar(entry.get()), entry.delete(0, tk.END)), # pasa el texto a la funcion y despues lo borra
         )
         entry_button.pack(padx=10, pady=10, fill=tk.X)
 
@@ -107,6 +107,11 @@ class SidePage1(tk.Frame):
             command=lambda: test1(),
         )
         test_button.pack(side="bottom", fill=tk.X)
+
+def guardar(informacion): # timestamp, Id_QR, nombre_película, cant_entradas, total_consumido
+    with open("ingresos.txt", "a") as archivo:
+        linea = informacion + "\n"
+        archivo.write(linea)
 
 def test(n):
     print(n)
