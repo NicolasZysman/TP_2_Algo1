@@ -220,6 +220,7 @@ def obtener_ubicaciones_pelicula(info_proyeccion: list, ubicaciones: list[str]) 
 
     return peli_en_cine
 
+
 def suma_total(acumulador_precios: list):
     precio_total: float = 0
     contador_entradas: int = 0
@@ -245,6 +246,7 @@ def suma_total(acumulador_precios: list):
 
     print("Tenes que pagar ", precio_total, " pesos")
 
+
 def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list):
     iterador_fila: int = 4
     for snack, valor in info_snacks.items():
@@ -265,6 +267,7 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list):
 
         iterador_fila += 1
 
+
 def añadir_botones_reserva(self, acumulador_precios: list):
     añadir_sanck = tk.Button(self, text="Añadir Snack", bg="orange", command = lambda: imprimir_snacks(self, info_snacks, acumulador_precios))
     añadir_sanck.grid(row=3, column=0)
@@ -279,6 +282,7 @@ def añadir_botones_reserva(self, acumulador_precios: list):
     )
 
     agregar.grid(row=11, column=1)
+
 
 def ingresar_valor_unitario(self, acumulador_precios: list):
     etiqueta_2 = tk.Label(self, text="Valor unitario por entrada")
@@ -297,6 +301,7 @@ def ingresar_valor_unitario(self, acumulador_precios: list):
         )
     
     boton_random2.grid(row=2, column=1)
+
 
 class ventanas(tk.Tk):
     
@@ -400,8 +405,6 @@ class Cartelera(tk.Frame):
         boton_busqueda.pack()
 
         posters_cartelera(self, lista_posters, controller)
-
-
 
 
 class Pelicula(tk.Frame):
