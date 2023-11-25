@@ -155,6 +155,7 @@ def obtener_ubicaciones(cines: dict) -> list[str]:
 
 def id_pelis_en_cine(cine_id) -> list:
     
+    
     pelis_en_cine = get_pelis_en_cine(cine_id)
 
     for diccionario in pelis_en_cine:
@@ -371,15 +372,13 @@ class Ubicacion(tk.Frame):
                 boton = tk.Button(
                     self,
                     text=ubicacion,
-                    command = lambda cine_id = (i + 1): controller.show_frame(Cartelera, cine_id)
+                    command = lambda cine_id=i + 1: controller.show_frame(Cartelera, cine_id)
                 )
                 boton.grid(row=0, column=i)
     
-    def mostrar_cartelera(self, controller, cine_id):
-        controller.show_frame(Cartelera, cine_id)
 
 
-def posters_cartelera(ventana, lista_posters, controller):
+def posters_cartelera(ventana, lista_posters, controller, cine_id):
 
     for _, poster in enumerate(lista_posters):
 
@@ -392,7 +391,7 @@ def posters_cartelera(ventana, lista_posters, controller):
             boton = tk.Button(
                 ventana, 
                 image=tk_imagen, 
-                command = lambda: controller.show_frame(Pelicula)
+                command = lambda: controller.show_frame(Pelicula, cine_id)
             )
             boton.pack()
             # boton.grid(row=3, column=2)
@@ -420,7 +419,7 @@ class Cartelera(tk.Frame):
         
         self.cine_id = cine_id
         info_cines = get_cines()
-        lista_pelis_en_cine = id_pelis_en_cine(self.cine_id) # habria que pasarle el id del cine(no se me ocurre como)
+        lista_pelis_en_cine = id_pelis_en_cine(self.cine_id)
         posters_id = lista_poster_id(lista_pelis_en_cine)
         lista_posters = lista_img_posters(posters_id)
 
@@ -435,7 +434,7 @@ class Cartelera(tk.Frame):
         boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: filtrar_busqueda(entrada_busqueda_peli.get(), posters_id)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
         boton_busqueda.pack()
 
-        posters_cartelera(self, lista_posters, controller)
+        posters_cartelera(self, lista_posters, controller, self.cine_id)
 
     def actualizar_cine_id(self, cine_id):
         self.cine_id = cine_id
@@ -444,12 +443,12 @@ class Cartelera(tk.Frame):
 
 class Pelicula(tk.Frame):
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, cine_id):
         
         tk.Frame.__init__(self, parent)
 
         peli_id = 8
-        cine_id = 5
+        self.cine_id = cine_id
         info_peli = get_pelicula_por_Id(peli_id)
         info_cines = get_cines()
         info_proyeccion = get_proyeccion(peli_id)
@@ -496,21 +495,25 @@ class Pelicula(tk.Frame):
         
         if(asientos > 0):
 
-            boton_reserva = tk.Button(self, text="Reservar", bg="green", command = lambda: controller.show_frame(Reserva))
+            boton_reserva = tk.Button(self, text="Reservar", bg="green", command = lambda: controller.show_frame(Reserva, cine_id))
             boton_reserva.pack()
         else:
             tk.Label(self, text="No hay asientos disponibles", bg="red").pack()
 
         
-        boton_volver = tk.Button(self, text="Volver", command = lambda: controller.show_frame(Cartelera))
+        boton_volver = tk.Button(self, text="Volver", command = lambda: controller.show_frame(Cartelera, cine_id))
         boton_volver.pack()
 
+    def actualizar_cine_id(self, cine_id):
+        self.cine_id = cine_id
 
 class Reserva(tk.Frame):
     
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, cine_id):
         
         tk.Frame.__init__(self, parent)
+
+        self.cine_id = cine_id
 
         acumulador_precios: list = []
 
@@ -530,8 +533,11 @@ class Reserva(tk.Frame):
 
         boton_random1.grid(row=2, column=0)
 
-        boton_volver = tk.Button(self, text="Volver", bg="red", command = lambda: controller.show_frame(Pelicula))
+        boton_volver = tk.Button(self, text="Volver", bg="red", command = lambda: controller.show_frame(Pelicula, cine_id))
         boton_volver.grid(row=11, column=0)
+
+    def actualizar_cine_id(self, cine_id):
+        self.cine_id = cine_id
 
 
 def main():     
