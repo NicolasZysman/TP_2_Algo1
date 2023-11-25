@@ -251,7 +251,7 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list):
         iterador_columna: int = 0
 
         mostrar_snack = tk.Label(self, text=snack)
-        mostrar_valor = tk.Button(self, text="Pagar " + valor, command = lambda: acumulador_precios.append(valor))
+        mostrar_valor = tk.Button(self, text="Pagar " + valor, command = lambda i = valor: acumulador_precios.append(i))
         # sumar_carrito = tk.Button(self, text="+")
 
         mostrar_snack.grid(row=iterador_fila, column=iterador_columna)
@@ -329,7 +329,7 @@ class ventanas(tk.Tk):
     #     frame.tkraise()
         
         self.geometry("500x500")
-        
+
         self.container = tk.Frame(self, height=500, width=500)
         self.container.pack(side="top", fill="both", expand=True)
         
@@ -339,7 +339,7 @@ class ventanas(tk.Tk):
             Ubicacion: Ubicacion,
             Cartelera: Cartelera,
             Pelicula: Pelicula,
-            Reserva: Reserva,
+            Reserva: Reserva
         }
         
         for F in clase_frames:
@@ -370,7 +370,7 @@ class Ubicacion(tk.Frame):
                 boton = tk.Button(
                     self,
                     text=ubicacion,
-                    command = lambda cine_id=i + 1: controller.show_frame(Cartelera, cine_id)
+                    command = lambda cine_id=i + 1: self.mostrar_cartelera(controller, cine_id)
                 )
                 boton.grid(row=0, column=i)
     
@@ -413,9 +413,11 @@ class Cartelera(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
+       
+        
         self.cine_id = cine_id
         info_cines = get_cines()
-        lista_pelis_en_cine = id_pelis_en_cine(self.cine_id)#habria que pasarle el id del cine(no se me ocurre como)
+        lista_pelis_en_cine = id_pelis_en_cine()#habria que pasarle el id del cine(no se me ocurre como)
         posters_id = lista_poster_id(lista_pelis_en_cine)
         lista_posters = lista_img_posters(posters_id)
 
