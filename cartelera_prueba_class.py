@@ -220,7 +220,7 @@ def obtener_ubicaciones_pelicula(info_proyeccion: list, ubicaciones: list[str]) 
 
     return peli_en_cine
 
-def suma_total(acumulador_precios: list):
+def suma_total(acumulador_precios: list) -> float:
     precio_total: float = 0
     contador_entradas: int = 0
     cantidad_entradas: int = 0
@@ -243,7 +243,7 @@ def suma_total(acumulador_precios: list):
         else:       
             precio_total += float(gasto)
 
-    print("Tenes que pagar ", precio_total, " pesos")
+    return precio_total
 
 def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list):
     iterador_fila: int = 4
@@ -271,11 +271,12 @@ def añadir_botones_reserva(self, acumulador_precios: list):
 
     info_snacks: dict = get_snacks()
 
+    self.precio_total: float = tk.DoubleVar()
     agregar = tk.Button(
         self, 
         text="Añadir al carro", 
         bg="green" , 
-        command = lambda: suma_total(acumulador_precios)
+        command = lambda: [self.precio_total.set(suma_total(acumulador_precios)), print(self.precio_total)]
     )
 
     agregar.grid(row=11, column=1)
