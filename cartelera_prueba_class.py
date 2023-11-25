@@ -306,7 +306,7 @@ class ventanas(tk.Tk):
     
     #     frame.tkraise()
         
-        self.geometry("500x500")
+        self.geometry("1000x1000")
 
         self.container = tk.Frame(self, height=500, width=500)
         self.container.pack(side="top", fill="both", expand=True)
@@ -341,6 +341,11 @@ class Ubicacion(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
+        cant_columnas = 7
+
+        for col in range(cant_columnas):
+            self.grid_columnconfigure(col, weight=1, minsize = 142)
+
         info_cines = get_cines()
         ubicaciones = obtener_ubicaciones(info_cines)
 
@@ -351,7 +356,7 @@ class Ubicacion(tk.Frame):
                     text=ubicacion,
                     command = lambda cine_id=i + 1: controller.show_frame(Cartelera, cine_id)
                 )
-                boton.grid(row=0, column=i)
+                boton.grid(row=0, column=i, padx = 5, sticky="nsew")
     
 
 def filtrar_busqueda(ventana, get_entry, controller, lista_pelis_en_cine, cine_id):
@@ -411,12 +416,15 @@ class Busqueda(tk.Frame):
 
 def posters_cartelera(ventana, lista_posters, lista_pelis_en_cine, controller, cine_id):
 
+    columna = 1
+    fila = 9
+
     for i, poster in enumerate(lista_posters):
 
             tk_imagen = convertir_imagen(poster)
 
             etiqueta = tk.Label(ventana, image=tk_imagen)
-            # etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
+            etiqueta.grid(row=fila, column = columna, pady = 10)
             etiqueta.image = tk_imagen 
 
             boton = tk.Button(
@@ -424,7 +432,18 @@ def posters_cartelera(ventana, lista_posters, lista_pelis_en_cine, controller, c
                 image=tk_imagen, 
                 command = lambda i=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(i, lista_pelis_en_cine))
             )
-            boton.pack()
+            boton.grid(row=fila, column = columna, pady = 10)
+
+            if columna == 4:
+                fila += 1
+
+            if columna == 1:
+                columna = 4
+            else:
+                columna = 1
+            
+            
+
             # boton.grid(row=3, column=2)
 
 
@@ -458,8 +477,12 @@ class Cartelera(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
-       
-        
+        cant_columnas = 8
+
+        for col in range(cant_columnas):
+            self.grid_columnconfigure(col, weight=1, minsize = 125)
+            
+
         self.cine_id = cine_id
         info_cines = get_cines()
         lista_pelis_en_cine = id_pelis_en_cine(self.cine_id)
@@ -467,13 +490,13 @@ class Cartelera(tk.Frame):
         lista_posters = lista_img_posters(posters_id)
 
         ubicacion = info_cines[self.cine_id - 1]["location"]
-        tk.Label(self, text=ubicacion).pack()
+        tk.Label(self, text=ubicacion).grid(row = 0 , column = 2, columnspan = 2, pady = 10)
 
 
         # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
 
         boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
-        boton_busqueda.pack()
+        boton_busqueda.grid(row = 1, column = 2, columnspan= 2)
 
         posters_cartelera(self, lista_posters, lista_pelis_en_cine, controller, self.cine_id)
 
