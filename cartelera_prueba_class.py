@@ -328,8 +328,6 @@ class ventanas(tk.Tk):
     #     frame.tkraise()
         
         self.geometry("500x500")
-        
-        self.cine_id: list = []
 
         self.container = tk.Frame(self, height=500, width=500)
         self.container.pack(side="top", fill="both", expand=True)
@@ -371,12 +369,7 @@ class Ubicacion(tk.Frame):
                 boton = tk.Button(
                     self,
                     text=ubicacion,
-                    command = lambda cine_id = (i + 1): [
-                        print(cine_id), 
-                        controller.show_frame(Cartelera, cine_id),
-                        # cine_id.append(j)
-                        ]
-                )
+                    command = lambda cine_id = (i + 1): controller.show_frame(Cartelera, cine_id)
                 boton.grid(row=0, column=i)
     
     def mostrar_cartelera(self, controller, cine_id):
@@ -420,28 +413,26 @@ class Cartelera(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
-        print(cine_id)
-
-        if cine_id != []:
+       
         
-            self.cine_id = cine_id
-            info_cines = get_cines()
-            lista_pelis_en_cine = id_pelis_en_cine(self.cine_id) # habria que pasarle el id del cine(no se me ocurre como)
-            posters_id = lista_poster_id(lista_pelis_en_cine)
-            lista_posters = lista_img_posters(posters_id)
+        self.cine_id = cine_id
+        info_cines = get_cines()
+        lista_pelis_en_cine = id_pelis_en_cine(self.cine_id) # habria que pasarle el id del cine(no se me ocurre como)
+        posters_id = lista_poster_id(lista_pelis_en_cine)
+        lista_posters = lista_img_posters(posters_id)
 
-            ubicacion = info_cines[self.cine_id - 1]["location"]
-            tk.Label(self, text=ubicacion).pack()
+        ubicacion = info_cines[self.cine_id - 1]["location"]
+        tk.Label(self, text=ubicacion).pack()
 
-            entrada_busqueda_peli = tk.Entry(self)
-            entrada_busqueda_peli.pack(pady = 10)
+        entrada_busqueda_peli = tk.Entry(self)
+        entrada_busqueda_peli.pack(pady = 10)
 
-            # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
+        # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
 
-            boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: filtrar_busqueda(entrada_busqueda_peli.get(), posters_id)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
-            boton_busqueda.pack()
+        boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: filtrar_busqueda(entrada_busqueda_peli.get(), posters_id)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
+        boton_busqueda.pack()
 
-            posters_cartelera(self, lista_posters, controller)
+        posters_cartelera(self, lista_posters, controller)
 
     def actualizar_cine_id(self, cine_id):
         self.cine_id = cine_id
