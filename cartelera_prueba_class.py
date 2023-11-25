@@ -361,6 +361,7 @@ def filtrar_busqueda(ventana, get_entry, controller, lista_pelis_en_cine, cine_i
     nombre_pelis = []
     pelis_encontradas = []
     poster_id = []
+    id_peliculas = []
 
     for peli in peliculas_totales:
         if peli["movie_id"] in lista_pelis_en_cine:
@@ -373,6 +374,7 @@ def filtrar_busqueda(ventana, get_entry, controller, lista_pelis_en_cine, cine_i
     for pelicula in peliculas_totales:
         if pelicula["name"] in pelis_encontradas:
             poster_id.append(pelicula["poster_id"])
+            id_peliculas.append(pelicula["movie_id"])
 
 
     if len(pelis_encontradas) == 0:
@@ -380,9 +382,8 @@ def filtrar_busqueda(ventana, get_entry, controller, lista_pelis_en_cine, cine_i
         
     lista_posters = lista_img_posters(poster_id)
 
-    posters_cartelera(ventana, lista_posters, lista_pelis_en_cine, controller, cine_id)
+    posters_busqueda(ventana, lista_posters, id_peliculas, controller, cine_id)
 
-    print(pelis_encontradas)
 
 
 class Busqueda(tk.Frame):
@@ -432,7 +433,7 @@ def encontrar_peli_id(i, lista_pelis_en_cine) -> int:
     return peli_id
 
 
-def posters_busqueda(ventana, lista_posters, lista_pelis_en_cine, controller, cine_id):
+def posters_busqueda(ventana, lista_posters, id_peliculas, controller, cine_id):
 
     for i, poster in enumerate(lista_posters):
 
@@ -445,7 +446,7 @@ def posters_busqueda(ventana, lista_posters, lista_pelis_en_cine, controller, ci
             boton = tk.Button(
                 ventana, 
                 image=tk_imagen, 
-                command = lambda i=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(i, lista_pelis_en_cine))
+                command = lambda i=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(i, id_peliculas))
             )
             boton.pack()
             # boton.grid(row=3, column=2)
