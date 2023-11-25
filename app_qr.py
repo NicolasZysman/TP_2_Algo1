@@ -1,4 +1,5 @@
 import tkinter as tk
+import cv2
 
 class windows(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -103,15 +104,40 @@ class SidePage1(tk.Frame):
 
         test_button = tk.Button(
             self,
-            text="Prueba",
-            command=lambda: test1(),
+            text="Escanear QR",
+            command=lambda: detectar_qr(),
         )
-        test_button.pack(side="bottom", fill=tk.X)
+        test_button.pack(padx=10, pady=10, fill=tk.X)
 
 def guardar(informacion): # timestamp, Id_QR, nombre_película, cant_entradas, total_consumido
     with open("ingresos.txt", "a") as archivo:
         linea = informacion + "\n"
         archivo.write(linea)
+
+def detectar_qr():
+    camera_id = 0
+    delay = 1
+    window_name = 'OpenCV QR Code'
+
+    qcd = cv2.QRCodeDetector()
+    cap = cv2.VideoCapture(camera_id)
+
+    exit = False
+
+    while not exit:
+        ret, frame = cap.read()
+
+        if ret:
+            ret_qr, decoded_info, _, _ = qcd.detectAndDecodeMulti(frame)
+            if ret_qr:
+                print(decoded_info)
+                exit = True
+            cv2.imshow(window_name, frame)
+
+        if cv2.waitKey(delay) & 0xFF == ord('q'): # q para salir
+            exit = True
+
+    cv2.destroyWindow(window_name)
 
 def test(n):
     print(n)

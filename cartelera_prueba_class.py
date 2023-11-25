@@ -303,39 +303,63 @@ class ventanas(tk.Tk):
         
         tk.Tk.__init__(self, *args, **kwargs)
         self.wm_title("Cinepolis")
-        self.geometry("500x500")
+        # self.geometry("500x500")
 
+        # self.container = tk.Frame(self, height=500, width=500)
+        # self.container.pack(side="top", fill="both", expand=True)
+        
+
+        # self.frames: dict = {}
+        
+    #     for F in (Ubicacion, Cartelera, Pelicula, Reserva):
+
+    #         frame = F(container, self)
+    #         self.frames[F] = frame
+    #         frame.grid(row=0, column=0, sticky="nsew")
+
+    #     self.show_frame(Ubicacion)
+
+    # def show_frame(self, cont, cine_id=None):
+    #     frame = self.frames[cont]
+    
+    #     if cont == Cartelera and cine_id is not None:
+    #             frame.update_cine_id(cine_id)
+    
+    #     frame.tkraise()
+        
+        self.geometry("500x500")
+        
         self.cine_id: list = []
 
-        container = tk.Frame(self, height=500, width=500)
-        container.pack(side="top", fill="both", expand=True)
+        self.container = tk.Frame(self, height=500, width=500)
+        self.container.pack(side="top", fill="both", expand=True)
         
-
         self.frames: dict = {}
         
-        for F in (Ubicacion, Cartelera, Pelicula, Reserva):
-
-            if F == Ubicacion or F == Cartelera:
-                frame = F(container, self, self.cine_id)
-                self.frames[F] = frame
-            else:
-
-                frame = F(container, self)
-                self.frames[F] = frame
-            
-            frame.grid(row=0, column=0, sticky="nsew")
+        clase_frames = {
+            Ubicacion: Ubicacion,
+            Cartelera: Cartelera,
+            Pelicula: Pelicula,
+            Reserva: Reserva,
+        }
+        
+        for F in clase_frames:
+            self.frames[F] = None
 
         self.show_frame(Ubicacion)
 
-    def show_frame(self, cont):
-        
-        frame = self.frames[cont]
-        frame.tkraise()
+    def show_frame(self, clase, *args):
+        frame = self.frames[clase]
+        if frame == None:
+            frame = clase(self.container, self, *args)
+            frame.grid(row=0, column=0, sticky="nsew")
+        else:
+            frame.tkraise(*args)
 
 
 class Ubicacion(tk.Frame):
     
-    def __init__(self, parent, controller, cine_id: list):
+    def __init__(self, parent, controller):
         
         tk.Frame.__init__(self, parent)
 
@@ -347,13 +371,16 @@ class Ubicacion(tk.Frame):
                 boton = tk.Button(
                     self,
                     text=ubicacion,
-                    command = lambda j = i: [
-                        print(j), 
-                        controller.show_frame(Cartelera),
-                        cine_id.append(j)
+                    command = lambda cine_id = (i + 1): [
+                        print(cine_id), 
+                        controller.show_frame(Cartelera, cine_id),
+                        # cine_id.append(j)
                         ]
                 )
                 boton.grid(row=0, column=i)
+    
+    def mostrar_cartelera(self, controller, cine_id):
+        controller.show_frame(Cartelera, cine_id)
 
 
 def posters_cartelera(ventana, lista_posters, controller):
@@ -383,7 +410,7 @@ def filtrar_busqueda(get_entry, posters_id):
         if get_entry == p["name"]:
             posters_id.append(p["poster_id"])
 
-    print(posters_id)
+    # print(posters_id)
     return posters_id
 
 
@@ -416,6 +443,8 @@ class Cartelera(tk.Frame):
 
             posters_cartelera(self, lista_posters, controller)
 
+    def actualizar_cine_id(self, cine_id):
+        self.cine_id = cine_id
 
 
 
