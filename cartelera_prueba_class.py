@@ -338,7 +338,7 @@ class ventanas(tk.Tk):
             Ubicacion: Ubicacion,
             Cartelera: Cartelera,
             Pelicula: Pelicula,
-            Reserva: Reserva,
+            Reserva: Reserva
         }
         
         for F in clase_frames:
@@ -370,6 +370,7 @@ class Ubicacion(tk.Frame):
                     self,
                     text=ubicacion,
                     command = lambda cine_id = (i + 1): controller.show_frame(Cartelera, cine_id)
+                )
                 boton.grid(row=0, column=i)
     
     def mostrar_cartelera(self, controller, cine_id):
