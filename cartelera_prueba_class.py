@@ -303,6 +303,7 @@ class ventanas(tk.Tk):
         
         tk.Tk.__init__(self, *args, **kwargs)
         self.wm_title("Cinepolis")
+        """
         # self.geometry("500x500")
 
         # self.container = tk.Frame(self, height=500, width=500)
@@ -326,6 +327,7 @@ class ventanas(tk.Tk):
     #             frame.update_cine_id(cine_id)
     
     #     frame.tkraise()
+        """
         
         self.geometry("500x500")
 
