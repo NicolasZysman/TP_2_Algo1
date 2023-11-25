@@ -317,7 +317,7 @@ class ventanas(tk.Tk):
 
         self.frames: dict = {}
         
-        for F in (Ubicacion, Cartelera, Pelicula, Reserva):
+        for F in (Ubicacion, Cartelera, Pelicula, Reserva, Busqueda):
 
             frame = F(container, self)
             self.frames[F] = frame
@@ -369,23 +369,6 @@ def posters_cartelera(ventana, lista_posters, controller):
             # boton.grid(row=3, column=2)
 
 
-def filtrar_busqueda(ventana, controller, get_entry, posters_id):
-
-    peliculas_totales = get_peliculas()
-    posters_id = []
-
-    for p in peliculas_totales:
-        if get_entry == p["name"]:
-            posters_id.append(p["poster_id"])
-
-    lista_posters = lista_img_posters(posters_id)
-    
-    posters_cartelera(ventana, lista_posters, controller)
-
-    print(posters_id)
-    print(lista_posters)
-    
-
 class Cartelera(tk.Frame):
     
     def __init__(self, parent, controller):
@@ -401,16 +384,55 @@ class Cartelera(tk.Frame):
         ubicacion = info_cines[cine_id - 1]["location"]
         tk.Label(self, text=ubicacion).pack()
 
-        entrada_busqueda_peli = tk.Entry(self)
-        entrada_busqueda_peli.pack(pady = 10)
 
         # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
 
-        boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: filtrar_busqueda(self, controller, entrada_busqueda_peli.get(), posters_id)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
+        boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: controller.show_frame(Busqueda)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
         boton_busqueda.pack()
 
         posters_cartelera(self, lista_posters, controller)
 
+
+def filtrar_busqueda(ventana, get_entry, controller):
+
+    peliculas_totales = get_peliculas()
+    posters_id = []
+
+    for p in peliculas_totales:
+        if get_entry.upper() in p["name"]:
+            posters_id.append(p["poster_id"])
+
+    if len(posters_id) == 0:
+        tk.Label(ventana, text= "No se encuentra la pelicula en este cine").pack(pady = 10)
+        
+    lista_posters = lista_img_posters(posters_id)
+
+    posters_cartelera(ventana, lista_posters, controller)
+
+    print(posters_id)
+    
+
+
+class Busqueda(tk.Frame):
+
+    def __init__(self, parent, controller):
+    
+        tk.Frame.__init__(self, parent)
+
+        titulo = tk.Label(self, text="Ingrese pelicula...")
+        titulo.pack(pady = 10)
+
+
+        entrada_busqueda_peli = tk.Entry(self)
+        entrada_busqueda_peli.pack(pady = 10)
+
+        boton_busqueda = tk.Button(self, text = "Enter", command = lambda: [filtrar_busqueda(self, entrada_busqueda_peli.get(), controller)])
+        boton_busqueda.pack()
+        
+        boton_volver = tk.Button(self, text="Volver a Cartelera", command = lambda: controller.show_frame(Cartelera))
+        boton_volver.pack()
+
+        
 
 class Pelicula(tk.Frame):
 
