@@ -256,8 +256,7 @@ def obtener_ubicaciones_pelicula(info_proyeccion: list, ubicaciones: list[str]) 
 
     return peli_en_cine
 
-
-def suma_total(acumulador_precios: list):
+def suma_total(acumulador_precios: list) -> float:
     precio_total: float = 0
     contador_entradas: int = 0
     cantidad_entradas: int = 0
@@ -283,8 +282,6 @@ def suma_total(acumulador_precios: list):
             precio_total += float(gasto)
 
     return precio_total
-
-    print("Tenes que pagar ", precio_total, " pesos")
 
 def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list):
     iterador_fila: int = 4
@@ -328,6 +325,7 @@ def ingresar_valor_unitario(self, controller, cine_id, peli_id, acumulador_preci
     ingresar_valor = tk.Entry(self, width=35, borderwidth=2)
     ingresar_valor.grid(row=1, column=1)
 
+    self.precio_total: float = tk.DoubleVar()
     boton_random2 = tk.Button(
             self, 
             text="Ingresar", 
@@ -338,6 +336,8 @@ def ingresar_valor_unitario(self, controller, cine_id, peli_id, acumulador_preci
         )
     
     boton_random2.grid(row=2, column=1)
+
+    return self.precio_total.get()
 
 
 def filtrar_busqueda(ventana, get_entry, 
@@ -657,15 +657,25 @@ class Reserva(tk.Frame):
         seleccionar_cantidad_entradas = tk.Entry(self, width=35, borderwidth=2)
         seleccionar_cantidad_entradas.grid(row=1, column=0)
 
+        self.precio_total: float = tk.DoubleVar()
         boton_random1 = tk.Button(
             self, 
             text="Ingresar", 
             command = lambda: [
                 acumulador_precios.append(seleccionar_cantidad_entradas.get()),
-                ingresar_valor_unitario(self, controller, cine_id, peli_id, acumulador_precios)]
+                ingresar_valor_unitario(self, acumulador_precios)]
         )
 
         boton_random1.grid(row=2, column=0)
+
+        mostrar_precio_total = tk.Button(
+            self, 
+            text = "Mostrar Precio Total",
+            bg = "blue",
+            command = lambda: print(self.precio_total.get())
+            )
+        
+        mostrar_precio_total.grid(row = 3, column = 1)
 
         boton_volver = tk.Button(self, text="Volver", bg="red", 
                                  command = lambda: controller.show_frame(Pelicula, cine_id, peli_id))
