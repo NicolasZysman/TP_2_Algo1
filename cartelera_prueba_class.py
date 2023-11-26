@@ -9,6 +9,15 @@ import base64
 
 
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
+INDICE_CANTIDAD_ENTRADAS: int = 0
+INDICE_VALOR_UNITARIO: int = 1
+PRECIO_DORITOS: float = 2500.00
+PRECIO_POPCORN_XL: float = 3000.00
+PRECIO_POPCORN_XXL: float = 4300.00
+PRECIO_PAPAS_FRITAS: float = 1800.00
+PRECIO_COCA_COLA_XL: float = 1500.00
+PRECIO_COCA_COLA_XXL: float = 2350.00
+PRECIO_CHOCOLATE: float = 1100.00
 
 
 def autorizacion() -> dict:
@@ -283,6 +292,44 @@ def suma_total(acumulador_precios: list) -> float:
 
     return precio_total
 
+def cantidad_snacks_elegidos(acumulador_precios: list, info_snacks: dict) -> dict:
+    snacks: dict = {}
+
+    for elemento in range(len(acumulador_precios)):
+
+        if elemento != INDICE_CANTIDAD_ENTRADAS or elemento != INDICE_VALOR_UNITARIO:
+            contador: int = 0
+            for precio in acumulador_precios:
+
+                if precio == acumulador_precios[elemento]:
+                    contador += 1
+
+            if contador != 0:
+
+                for snack, valor in info_snacks.items():
+                    if valor == acumulador_precios[elemento]:
+
+                        snacks[snack] = contador
+            
+    return snacks
+
+
+def mostrar_compra(acumulador_precios: list, info_snacks: dict) -> dict:
+    compra: dict = {}
+
+    compra["Cantidad entradas"] = acumulador_precios[INDICE_CANTIDAD_ENTRADAS]
+    compra["Valor unitario"] = acumulador_precios[INDICE_VALOR_UNITARIO]
+
+    snacks: dict = cantidad_snacks_elegidos(acumulador_precios, info_snacks)
+    compra["Snacks"] = snacks   
+
+    precio_total: float = suma_total(acumulador_precios)
+    compra["Precio Total"] = precio_total
+
+    print(compra)
+
+    return compra
+
 def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list):
     iterador_fila: int = 4
     for snack, valor in info_snacks.items():
@@ -313,7 +360,7 @@ def añadir_botones_reserva(self, controller, cine_id, peli_id, acumulador_preci
         self, 
         text="Añadir al carro", 
         bg="green" , 
-        command = lambda: controller.show_frame(Carrito, cine_id, peli_id, suma_total(acumulador_precios)) 
+        command = lambda: controller.show_frame(Carrito, cine_id, peli_id, mostrar_compra(acumulador_precios, info_snacks)) 
     )
 
     agregar.grid(row=11, column=1)
@@ -663,7 +710,8 @@ class Reserva(tk.Frame):
             text="Ingresar", 
             command = lambda: [
                 acumulador_precios.append(seleccionar_cantidad_entradas.get()),
-                ingresar_valor_unitario(self, acumulador_precios)]
+                ingresar_valor_unitario(self, controller, cine_id, peli_id, acumulador_precios)
+                ]
         )
 
         boton_random1.grid(row=2, column=0)
