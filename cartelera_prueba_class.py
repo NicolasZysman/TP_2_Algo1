@@ -8,6 +8,7 @@ import cv2
 from io import BytesIO
 import base64
 from datetime import datetime
+from random import randint
 
 
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
@@ -799,7 +800,9 @@ class Carrito(tk.Frame):
 
         tk.Label(self, bg="red").pack()
 
-        boton_qr = tk.Button(self, text="Finalizar Compra", command = lambda: self.generar_qr(nombre, ubicacion, cantidad_entradas))
+        boton_qr = tk.Button(self, text="Finalizar Compra", 
+                             command = lambda: [self.generar_qr(nombre, ubicacion, cantidad_entradas), 
+                                                controller.show_frame(Cartelera, cine_id)])
         boton_qr.pack()
 
         # precios = {
@@ -813,12 +816,12 @@ class Carrito(tk.Frame):
         # }
 
     def generar_qr(self, nombre: str, ubicacion: str, cantidad_entradas: int) -> None:
-        
+        random_id = randint(1, 5000)
         dt = datetime.now()
-        raw_data = (f"1_{nombre}_{ubicacion}_{cantidad_entradas}{dt}")
+        raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}{dt}")
         data = raw_data.replace(" ", "")
         img = qrcode.make(data)
-        img.save(f"QR/Qr.png")
+        img.save(f"QR/Qr{random_id}.png")
 
 def main():     
     app = ventanas()
