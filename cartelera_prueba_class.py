@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 # import os
-# import qrcode
+import qrcode
 import requests
 from PIL import ImageTk,Image
 import cv2
@@ -266,8 +266,6 @@ def suma_total(acumulador_precios: list) -> float:
     precio_unitario: int = 0
     precio_entradas: int = 0
 
-    print(acumulador_precios)
-
     for gasto in acumulador_precios:
 
         if contador_entradas == 0:
@@ -319,8 +317,6 @@ def mostrar_compra(acumulador_precios: list, info_snacks: dict) -> dict:
 
     precio_total: float = suma_total(acumulador_precios)
     compra["Precio Total"] = precio_total
-
-    print(compra)
 
     return compra
 
@@ -788,12 +784,38 @@ class Carrito(tk.Frame):
         self.peli_id: int = peli_id
         self.precios = precios
 
+        info_peli = get_pelicula_por_Id(self.peli_id)
+        nombre: str = info_peli["name"]
+
+        info_cines: list[dict] = get_cines()
+        ubicacion: str = info_cines[self.cine_id - 1]["location"]
+
+        cantidad_entradas = precios["Cantidad entradas"]
+
         tk.Label(self, text=self.cine_id).pack()
         tk.Label(self, text=self.peli_id).pack()
         tk.Label(self, text=self.precios).pack()
 
         tk.Label(self, bg="red").pack()
 
+        boton_qr = tk.Button(self, text="Finalizar Compra", command = lambda: self.generar_qr(nombre, ubicacion, cantidad_entradas))
+        boton_qr.pack()
+
+        # precios = {
+        #     'Cantidad entradas': 2,
+        #     'Valor unitario': 100,
+        #     'Snacks': {
+        #         'doritos': 3,
+        #         'popcorn_xl': 1
+        #     },
+        #     'Precio total': 10700
+        # }
+
+    def generar_qr(self, nombre: str, ubicacion: str, cantidad_entradas: int) -> None:
+        raw_data = (f"1_{nombre}_{ubicacion}_{cantidad_entradas}")
+        data = raw_data.replace(" ", "")
+        img = qrcode.make(data)
+        img.save("QR/Qr.pdf")
 
 def main():     
     app = ventanas()
