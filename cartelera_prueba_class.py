@@ -12,6 +12,10 @@ API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiw
 
 
 def autorizacion() -> dict:
+    '''
+    Pre: XXX
+    Post: Devuelve un diccionario con la key de la api
+    '''
     
     Headers: dict = { "Authorization" : f"Bearer {API_KEY}" }
 
@@ -19,6 +23,11 @@ def autorizacion() -> dict:
 
 
 def get_peliculas() -> list[dict]:
+    '''
+    Pre: XXX
+    Post: Devuelve una lista de diccionarios con la info 
+          del endpoint /movies
+    '''
 
     header = autorizacion()
 
@@ -33,7 +42,12 @@ def get_peliculas() -> list[dict]:
     return info_peliculas
 
 
-def get_pelicula_por_Id(pelicula_id: int) -> dict:
+def get_pelicula_por_Id(pelicula_id: int) -> list[dict]:
+    '''
+    Pre: Recibe un int del id de pelicula
+    Post: Devuelve una lista de diccionarios con la info 
+          del endpoint /movies/pelicula_id
+    '''
 
     header = autorizacion()
 
@@ -49,6 +63,11 @@ def get_pelicula_por_Id(pelicula_id: int) -> dict:
 
 
 def get_poster_por_Id(poster_id: int) -> dict:
+    '''
+    Pre: Recibe un int del id del poster
+    Post: Devuelve un diccionario con la info
+          del endpoint /posters/poster_id
+    '''
 
     header = autorizacion()
 
@@ -63,19 +82,12 @@ def get_poster_por_Id(poster_id: int) -> dict:
     return img_poster
 
 
-def lista_img_posters(posters: list) -> list:
-    
-    lista_dict_posters: list[dict] = []
-
-    for poster_id in posters:
-        lista_dict_posters.append(get_poster_por_Id(poster_id))
-    
-    lista_str_posters: list[str] = [diccionario["poster_image"] for diccionario in lista_dict_posters]
-    
-    return lista_str_posters
-
-
 def get_snacks() -> dict:
+    '''
+    Pre: XXX
+    Post: Devuelve un diccionario con la info
+          del endpoint /snacks
+    '''
 
     header = autorizacion()
 
@@ -91,6 +103,12 @@ def get_snacks() -> dict:
 
 
 def get_proyeccion(pelicula_id: int) -> list:
+    '''
+    Pre: Recibe un int del id de pelicula
+    Post: Devuelve una lista con la info 
+          del endpoint /movies/pelicula_id/cinemas  
+          (donde se proyecta cada pelicula)  
+    '''
 
     header = autorizacion()
 
@@ -106,6 +124,11 @@ def get_proyeccion(pelicula_id: int) -> list:
 
 
 def get_cines() -> list[dict]:
+    '''
+    Pre: XXX
+    Post: Devuelve una lista de diccionarios con la info
+          del endpoint /cinemas
+    '''
 
     header = autorizacion()
 
@@ -121,6 +144,12 @@ def get_cines() -> list[dict]:
 
 
 def get_pelis_en_cine(cine_id: int) -> list[dict]:
+    '''
+    Pre: Recibe un int del id de cine
+    Post: Devuelve una lista de diccionarios con la info
+          del endpoint /cinemas/movies_id/movies
+    '''
+
 
     header = autorizacion()
 
@@ -135,36 +164,11 @@ def get_pelis_en_cine(cine_id: int) -> list[dict]:
     return info_pelis_en_cine
 
 
-def obtener_ubicaciones(cines: dict) -> list[str]:
-
-    lista_ubicaciones: list[str] = []
-
-    for cine in cines:
-        if cine["location"] not in lista_ubicaciones:
-            lista_ubicaciones.append(cine["location"])
-    
-    return lista_ubicaciones
-
-# def obtener_id_poster_por_nombre(nombre_pelicula: str) -> str:
-
-#     dict_peliculas: dict = get_peliculas()
-
-#     for peli in dict_peliculas:
-#         if nombre_pelicula == peli["name"]:
-#             return peli["poster_id"]
-
-def id_pelis_en_cine(cine_id) -> list:
-    
-    
-    pelis_en_cine = get_pelis_en_cine(cine_id)
-
-    for diccionario in pelis_en_cine:
-        lista_pelis_en_cine = diccionario["has_movies"]
-
-    return lista_pelis_en_cine
-
-
 def lista_poster_id(peliculas: list) -> list[int]:
+    '''
+    Pre: Recibe una lista de peliculas
+    Post: Devuelve una lista con los id de los posters
+    '''
 
     posters_id = []
 
@@ -176,29 +180,57 @@ def lista_poster_id(peliculas: list) -> list[int]:
     return posters_id
 
 
-def onbutton_click(cine_id: int) -> int:
+def lista_img_posters(posters: list) -> list:
+    '''
+    Pre: Recibe una lista de posters
+    Post: Devuelve una lista con la imagen de cada pelicula
+    '''
+    
+    lista_dict_posters: list[dict] = []
 
-    #Hay que hacer que cambie de pagina a la pagina principal con todas las peliculas   
-
-    ventana_peliculas = tk.Toplevel()
-    ventana_peliculas.geometry("1000x500")
-
-    portada_1 = tk.Button(ventana_peliculas, text="Pelicula 1", width=50, borderwidth=5, command=ventana_peliculas.destroy)
-    portada_1.pack()
-
-    entrada_busqueda_peli = tk.Entry(ventana_peliculas)
-    entrada_busqueda_peli.pack(pady = 10)
-    retorno_busqueda_peli: str = entrada_busqueda_peli.get()
-
-    # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
-
-    boton_busqueda = tk.Button(ventana_peliculas, text = "Buscar pelicula...") # command = lambda: mostrar_pelicula_en_cine(ventana_peliculas, cine_id, get_entry)
-    boton_busqueda.pack()
-
-    return cine_id
+    for poster_id in posters:
+        lista_dict_posters.append(get_poster_por_Id(poster_id))
+    
+    lista_str_posters: list[str] = [diccionario["poster_image"] for diccionario in lista_dict_posters]
+    
+    return lista_str_posters
 
 
-def convertir_imagen(poster):
+def obtener_ubicaciones(cines: dict) -> list[str]:
+    '''
+    Pre: Recibe un diccionario con la info de cines
+    Post: Devuelve una lista con las ubicaciones
+    '''
+
+    lista_ubicaciones: list[str] = []
+
+    for cine in cines:
+        if cine["location"] not in lista_ubicaciones:
+            lista_ubicaciones.append(cine["location"])
+    
+    return lista_ubicaciones
+
+
+def id_pelis_en_cine(cine_id: int) -> list:
+    '''
+    Pre: Recibe una int de cine_id
+    Post: Devuelve una lista con los id de las peliculas
+          disponibles en la ubicacion actual
+    '''
+    
+    pelis_en_cine = get_pelis_en_cine(cine_id)
+
+    for diccionario in pelis_en_cine:
+        lista_pelis_en_cine = diccionario["has_movies"]
+
+    return lista_pelis_en_cine
+
+
+def convertir_imagen(poster: str):
+    '''
+    Pre: Recibe una str de poster
+    Post: Devuelve una imagen en formato legible para tkinter
+    '''
 
     poster = (poster.replace('data:image/jpeg;base64,', ''))
     poster_bytes = base64.b64decode(poster)
@@ -210,6 +242,10 @@ def convertir_imagen(poster):
 
 
 def obtener_ubicaciones_pelicula(info_proyeccion: list, ubicaciones: list[str]) -> list:
+    '''
+    Pre: Recibe una lista de info_proyeccion y una lista con ubicaciones
+    Post: Devuelve una lista con los cines donde se proyecta la pelicula
+    '''
     
     peli_en_cine = []
         
@@ -304,100 +340,74 @@ def ingresar_valor_unitario(self, acumulador_precios: list):
 
     return self.precio_total.get()
 
-class ventanas(tk.Tk):
-    
-    def __init__(self, *args, **kwargs):
-        
-        tk.Tk.__init__(self, *args, **kwargs)
-        self.wm_title("Cinepolis")
-        """
-        # self.geometry("500x500")
 
-        # self.container = tk.Frame(self, height=500, width=500)
-        # self.container.pack(side="top", fill="both", expand=True)
-        
-
-        # self.frames: dict = {}
-        
-    #     for F in (Ubicacion, Cartelera, Pelicula, Reserva):
-
-    #         frame = F(container, self)
-    #         self.frames[F] = frame
-    #         frame.grid(row=0, column=0, sticky="nsew")
-
-    #     self.show_frame(Ubicacion)
-
-    # def show_frame(self, cont, cine_id=None):
-    #     frame = self.frames[cont]
-    
-    #     if cont == Cartelera and cine_id is not None:
-    #             frame.update_cine_id(cine_id)
-    
-    #     frame.tkraise()
-        """
-        
-        self.geometry("500x500")
-
-        self.container = tk.Frame(self, height=500, width=500)
-        self.container.pack(side="top", fill="both", expand=True)
-        
-        self.frames: dict = {}
-        
-        clase_frames = {
-            Ubicacion: Ubicacion,
-            Cartelera: Cartelera,
-            Pelicula: Pelicula,
-            Reserva: Reserva
-        }
-        
-        for F in clase_frames:
-            self.frames[F] = None
-
-        self.show_frame(Ubicacion)
-
-    def show_frame(self, clase, *args):
-        frame = self.frames[clase]
-        if frame == None:
-            frame = clase(self.container, self, *args)
-            frame.grid(row=0, column=0, sticky="nsew")
-        else:
-            frame.tkraise(*args)
-
-
-class Ubicacion(tk.Frame):
-    
-    def __init__(self, parent, controller):
-        
-        tk.Frame.__init__(self, parent)
-
-        info_cines = get_cines()
-        ubicaciones = obtener_ubicaciones(info_cines)
-
-        for i,ubicacion in enumerate(ubicaciones):
-                
-                boton = tk.Button(
-                    self,
-                    text=ubicacion,
-                    command = lambda cine_id=i + 1: controller.show_frame(Cartelera, cine_id)
-                )
-                boton.grid(row=0, column=i)
-    
-
-
-
-
-def filtrar_busqueda(get_entry, posters_id):
+def filtrar_busqueda(ventana, get_entry, 
+        controller, lista_pelis_en_cine, cine_id):
 
     peliculas_totales = get_peliculas()
-    posters_id = []
-    for p in peliculas_totales:
-        if get_entry == p["name"]:
-            posters_id.append(p["poster_id"])
 
-    # print(posters_id)
-    return posters_id
+    nombre_pelis = []
+    pelis_encontradas = []
+    poster_id = []
+    id_peliculas = []
 
-def posters_cartelera(ventana, lista_posters, lista_pelis_en_cine, controller, cine_id):
+    for peli in peliculas_totales:
+        if peli["movie_id"] in lista_pelis_en_cine:
+            nombre_pelis.append(peli["name"])
+
+    for titulo in nombre_pelis:
+        if get_entry.upper() in titulo:
+            pelis_encontradas.append(titulo)
+    
+    for pelicula in peliculas_totales:
+        if pelicula["name"] in pelis_encontradas:
+            poster_id.append(pelicula["poster_id"])
+            id_peliculas.append(pelicula["movie_id"])
+
+
+    if len(pelis_encontradas) == 0:
+        tk.Label(ventana, text= "No se encuentra la pelicula en este cine").pack(pady = 10)
+        
+    lista_posters = lista_img_posters(poster_id)
+
+    posters_busqueda(ventana, lista_posters, 
+                     id_peliculas, controller, cine_id)
+
+
+def posters_cartelera(ventana, lista_posters, 
+                      lista_pelis_en_cine, controller, cine_id):
+
+    columna = 1
+    fila = 9
+
+    for i, poster in enumerate(lista_posters):
+
+            tk_imagen = convertir_imagen(poster)
+
+            etiqueta = tk.Label(ventana, image=tk_imagen)
+            etiqueta.grid(row=fila, column = columna, pady = 10)
+            etiqueta.image = tk_imagen 
+
+            boton = tk.Button(
+                ventana, 
+                image=tk_imagen, 
+                command = lambda i=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(i, lista_pelis_en_cine))
+            )
+            boton.grid(row=fila, column = columna, pady = 10)
+
+            if columna == 4:
+                fila += 1
+
+            if columna == 1:
+                columna = 4
+            else:
+                columna = 1
+            # boton.grid(row=3, column=2)
+
+
+
+def posters_busqueda(ventana, lista_posters, 
+                     id_peliculas, controller, cine_id):
 
     for i, poster in enumerate(lista_posters):
 
@@ -410,24 +420,136 @@ def posters_cartelera(ventana, lista_posters, lista_pelis_en_cine, controller, c
             boton = tk.Button(
                 ventana, 
                 image=tk_imagen, 
-                command = lambda i=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(i, lista_pelis_en_cine))
+                command = lambda i=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(i, id_peliculas))
             )
             boton.pack()
             # boton.grid(row=3, column=2)
 
+
 def encontrar_peli_id(i, lista_pelis_en_cine) -> int:
+    
     peli_id = lista_pelis_en_cine[i]
     return peli_id
 
 
-class Cartelera(tk.Frame):
+class ventanas(tk.Tk):
     
-    def __init__(self, parent, controller, cine_id):
+    def __init__(self, *args, **kwargs):
+        
+        tk.Tk.__init__(self, *args, **kwargs)
+        self.wm_title("Cinepolis")  
+        self.geometry("1000x1000")
+
+        self.container = tk.Frame(self, height=500, width=500)
+        self.container.pack(side="top", fill="both", expand=True)
+        
+        self.frames: dict = {}
+        
+        clase_frames = {
+            Ubicacion: Ubicacion,
+            Cartelera: Cartelera,
+            Pelicula: Pelicula,
+            Reserva: Reserva,
+            Busqueda: Busqueda
+        }
+        
+        for F in clase_frames:
+            self.frames[F] = None
+
+        self.show_frame(Ubicacion)
+
+    def show_frame(self, clase, *args):
+
+        frame = self.frames[clase]
+        
+        if frame == None:
+            
+            frame = clase(self.container, self, *args)
+            frame.grid(row=0, column=0, sticky="nsew")
+        
+        else:
+            frame.tkraise(*args)
+
+
+class Ubicacion(tk.Frame):
+    
+    def __init__(self, parent, controller):
         
         tk.Frame.__init__(self, parent)
 
-       
+        cant_columnas = 7
+
+        for col in range(cant_columnas):
+            self.grid_columnconfigure(col, weight=1, minsize = 142)
+
+        info_cines = get_cines()
+        ubicaciones = obtener_ubicaciones(info_cines)
+
+        for i,ubicacion in enumerate(ubicaciones):
+                
+                boton = tk.Button(
+                    self,
+                    text=ubicacion,
+                    command = lambda cine_id=i + 1: controller.show_frame(Cartelera, cine_id)
+                )
+                boton.grid(row=0, column=i, padx = 5, sticky="nsew")
+    
+
+class Busqueda(tk.Frame):
+
+    def __init__(self, parent, 
+                 controller, cine_id, lista_pelis_en_cine):
+    
+        tk.Frame.__init__(self, parent)
+
+        titulo = tk.Label(self, text="Ingrese pelicula...")
+        titulo.pack(pady = 10)
+
+        self.cine_id = cine_id
+        self.lista_pelis_en_cine = lista_pelis_en_cine
+
+
+        entrada_busqueda_peli = tk.Entry(self)
+        entrada_busqueda_peli.pack(pady = 10)
+
+        boton_busqueda = tk.Button(self, text = "Enter", command = lambda: [filtrar_busqueda(self, entrada_busqueda_peli.get(), controller, lista_pelis_en_cine, self.cine_id)])
+        boton_busqueda.pack()
         
+        boton_volver = tk.Button(self, text="Volver a Cartelera", command = lambda: controller.show_frame(Cartelera, cine_id))
+        boton_volver.pack()
+
+
+class Cartelera(tk.Frame):
+    
+    def __init__(self, parent, 
+                 controller, cine_id):
+        
+        tk.Frame.__init__(self, parent)
+
+        # Crear canvas
+        canvas = tk.Canvas(self, height=1000, width=980) # width = el ancho de la ventana - 20px de scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+
+        # Agregar scrollbar al canvas
+        scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        scrollbar.pack(side="right", fill="y", expand=True)
+
+        # Configuracion canvas
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion = canvas.bbox("all")))
+
+        # Crear frame en el canvas
+        segundo_frame = tk.Frame(canvas, bg="green")
+
+        # Agregar el segundo frame a una ventana en el canvas
+        canvas.create_window((0,0), window=segundo_frame, anchor="nw")
+
+        cant_columnas = 8
+
+        for col in range(cant_columnas):
+            segundo_frame.grid_columnconfigure(col, weight=1, minsize = 125)
+            
+
         self.cine_id = cine_id
         info_cines = get_cines()
         lista_pelis_en_cine = id_pelis_en_cine(self.cine_id)
@@ -435,26 +557,23 @@ class Cartelera(tk.Frame):
         lista_posters = lista_img_posters(posters_id)
 
         ubicacion = info_cines[self.cine_id - 1]["location"]
-        tk.Label(self, text=ubicacion).pack()
+        tk.Label(segundo_frame, text=ubicacion).grid(row = 0 , column = 2, columnspan = 2, pady = 10)
 
-        entrada_busqueda_peli = tk.Entry(self)
-        entrada_busqueda_peli.pack(pady = 10)
+        boton_busqueda = tk.Button(segundo_frame, text = "Buscar pelicula...", 
+                                   command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine))
+        boton_busqueda.grid(row = 1, column = 2, columnspan= 2)
 
-        # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
-
-        boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: filtrar_busqueda(entrada_busqueda_peli.get(), posters_id)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
-        boton_busqueda.pack()
-
-        posters_cartelera(self, lista_posters, lista_pelis_en_cine, controller, self.cine_id)
+        posters_cartelera(segundo_frame, lista_posters, 
+                          lista_pelis_en_cine, controller, self.cine_id)
 
     def actualizar_cine_id(self, cine_id):
         self.cine_id = cine_id
 
 
-
 class Pelicula(tk.Frame):
 
-    def __init__(self, parent, controller, cine_id, peli_id):
+    def __init__(self, parent, 
+                 controller, cine_id, peli_id):
         
         tk.Frame.__init__(self, parent)
 
@@ -506,13 +625,15 @@ class Pelicula(tk.Frame):
         
         if(asientos > 0):
 
-            boton_reserva = tk.Button(self, text="Reservar", bg="green", command = lambda: controller.show_frame(Reserva, cine_id, peli_id))
+            boton_reserva = tk.Button(self, text="Reservar", bg="green", 
+                                      command = lambda: controller.show_frame(Reserva, cine_id, peli_id))
             boton_reserva.pack()
         else:
             tk.Label(self, text="No hay asientos disponibles", bg="red").pack()
 
         
-        boton_volver = tk.Button(self, text="Volver", command = lambda: controller.show_frame(Cartelera, cine_id))
+        boton_volver = tk.Button(self, text="Volver", 
+                                 command = lambda: controller.show_frame(Cartelera, cine_id))
         boton_volver.pack()
 
     def actualizar_cine_id(self, cine_id):
@@ -520,7 +641,8 @@ class Pelicula(tk.Frame):
 
 class Reserva(tk.Frame):
     
-    def __init__(self, parent, controller, cine_id, peli_id):
+    def __init__(self, parent, 
+                 controller, cine_id, peli_id):
         
         tk.Frame.__init__(self, parent)
 
@@ -556,7 +678,8 @@ class Reserva(tk.Frame):
         
         mostrar_precio_total.grid(row = 3, column = 1)
 
-        boton_volver = tk.Button(self, text="Volver", bg="red", command = lambda: controller.show_frame(Pelicula, cine_id, peli_id))
+        boton_volver = tk.Button(self, text="Volver", bg="red", 
+                                 command = lambda: controller.show_frame(Pelicula, cine_id, peli_id))
         boton_volver.grid(row=11, column=0)
 
     def actualizar_cine_id(self, cine_id):
