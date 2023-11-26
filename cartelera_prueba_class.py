@@ -7,6 +7,7 @@ from PIL import ImageTk,Image
 import cv2
 from io import BytesIO
 import base64
+from datetime import datetime
 
 
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
@@ -812,10 +813,12 @@ class Carrito(tk.Frame):
         # }
 
     def generar_qr(self, nombre: str, ubicacion: str, cantidad_entradas: int) -> None:
-        raw_data = (f"1_{nombre}_{ubicacion}_{cantidad_entradas}")
+        
+        dt = datetime.now()
+        raw_data = (f"1_{nombre}_{ubicacion}_{cantidad_entradas}{dt}")
         data = raw_data.replace(" ", "")
         img = qrcode.make(data)
-        img.save("QR/Qr.pdf")
+        img.save(f"QR/Qr.png")
 
 def main():     
     app = ventanas()
