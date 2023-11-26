@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 # import os
 # import qrcode
 import requests
@@ -381,7 +382,8 @@ def ingresar_valor_unitario(self, controller, cine_id, peli_id, acumulador_preci
     etiqueta_2 = tk.Label(self, text="Valor unitario por entrada")
     etiqueta_2.grid(row=0, column=1)
     
-    ingresar_valor = tk.Entry(self, width=35, borderwidth=2)
+    validacion = (self.register(validar_mensaje), "%P")
+    ingresar_valor = tk.Entry(self, width=35, borderwidth=2, validate = "key", validatecommand = validacion)
     ingresar_valor.grid(row=1, column=1)
 
     self.precio_total: float = tk.DoubleVar()
@@ -512,6 +514,14 @@ def encontrar_peli_id(i, lista_pelis_en_cine) -> int:
     peli_id = lista_pelis_en_cine[i]
     return peli_id
 
+def validar_mensaje(texto: str) -> bool:
+    validacion: bool = False
+    if texto.isnumeric() == True or texto == "":
+        validacion = True
+    else:
+        messagebox.showerror("Error", "Por favor, ingrese solo números enteros.")
+
+    return validacion
 
 class ventanas(tk.Tk):
     
@@ -743,10 +753,11 @@ class Reserva(tk.Frame):
         etiqueta_1 = tk.Label(self, text="Ingrese la cantidad de entradas")
         etiqueta_1.grid(row=0, column=0)
 
-        seleccionar_cantidad_entradas = tk.Entry(self, width=35, borderwidth=2)
+        validacion = (self.register(validar_mensaje), "%P")
+
+        seleccionar_cantidad_entradas = tk.Entry(self, width=35, borderwidth=2, validate = "key", validatecommand = validacion)
         seleccionar_cantidad_entradas.grid(row=1, column=0)
 
-        self.precio_total: float = tk.DoubleVar()
         boton_random1 = tk.Button(
             self, 
             text="Ingresar", 
