@@ -477,10 +477,28 @@ class Cartelera(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
+        # Crear canvas
+        canvas = tk.Canvas(self, height=1000, width=980) # width = el ancho de la ventana - 20px de scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+
+        # Agregar scrollbar al canvas
+        scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        scrollbar.pack(side="right", fill="y", expand=True)
+
+        # Configuracion canvas
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion = canvas.bbox("all")))
+
+        # Crear frame en el canvas
+        segundo_frame = tk.Frame(canvas, bg="green")
+
+        # Agregar el segundo frame a una ventana en el canvas
+        canvas.create_window((0,0), window=segundo_frame, anchor="nw")
+
         cant_columnas = 8
 
         for col in range(cant_columnas):
-            self.grid_columnconfigure(col, weight=1, minsize = 125)
+            segundo_frame.grid_columnconfigure(col, weight=1, minsize = 125)
             
 
         self.cine_id = cine_id
@@ -490,15 +508,15 @@ class Cartelera(tk.Frame):
         lista_posters = lista_img_posters(posters_id)
 
         ubicacion = info_cines[self.cine_id - 1]["location"]
-        tk.Label(self, text=ubicacion).grid(row = 0 , column = 2, columnspan = 2, pady = 10)
+        tk.Label(segundo_frame, text=ubicacion).grid(row = 0 , column = 2, columnspan = 2, pady = 10)
 
 
         # poster_id: str = obtener_id_poster_por_nombre(retorno_busqueda_peli)
 
-        boton_busqueda = tk.Button(self, text = "Buscar pelicula...", command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
+        boton_busqueda = tk.Button(segundo_frame, text = "Buscar pelicula...", command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine)) # command = lambda: filtrar_busqueda(ventana_peliculas, cine_id, get_entry)
         boton_busqueda.grid(row = 1, column = 2, columnspan= 2)
 
-        posters_cartelera(self, lista_posters, lista_pelis_en_cine, controller, self.cine_id)
+        posters_cartelera(segundo_frame, lista_posters, lista_pelis_en_cine, controller, self.cine_id)
 
     def actualizar_cine_id(self, cine_id):
         self.cine_id = cine_id
