@@ -263,6 +263,8 @@ def suma_total(acumulador_precios: list) -> float:
     precio_unitario: int = 0
     precio_entradas: int = 0
 
+    print(acumulador_precios)
+
     for gasto in acumulador_precios:
 
         if contador_entradas == 0:
@@ -301,25 +303,22 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list):
 
         iterador_fila += 1
 
-def añadir_botones_reserva(self, acumulador_precios: list) -> float:
+def añadir_botones_reserva(self, controller, cine_id, peli_id, acumulador_precios: list):
+    
     añadir_sanck = tk.Button(self, text="Añadir Snack", bg="orange", command = lambda: imprimir_snacks(self, info_snacks, acumulador_precios))
     añadir_sanck.grid(row=3, column=0)
 
     info_snacks: dict = get_snacks()
-
-    self.precio_total: float = tk.DoubleVar()
     agregar = tk.Button(
         self, 
         text="Añadir al carro", 
         bg="green" , 
-        command = lambda: self.precio_total.set(suma_total(acumulador_precios))
+        command = lambda: controller.show_frame(Carrito, cine_id, peli_id, suma_total(acumulador_precios)) 
     )
 
     agregar.grid(row=11, column=1)
 
-    return self.precio_total.get()
-
-def ingresar_valor_unitario(self, acumulador_precios: list):
+def ingresar_valor_unitario(self, controller, cine_id, peli_id, acumulador_precios: list):
     etiqueta_2 = tk.Label(self, text="Valor unitario por entrada")
     etiqueta_2.grid(row=0, column=1)
     
@@ -332,7 +331,7 @@ def ingresar_valor_unitario(self, acumulador_precios: list):
             text="Ingresar", 
             command = lambda: [
                 acumulador_precios.append(ingresar_valor.get()),
-                self.precio_total.set(añadir_botones_reserva(self, acumulador_precios))
+                añadir_botones_reserva(self, controller, cine_id, peli_id, acumulador_precios)
             ]
         )
     
@@ -450,7 +449,8 @@ class ventanas(tk.Tk):
             Cartelera: Cartelera,
             Pelicula: Pelicula,
             Reserva: Reserva,
-            Busqueda: Busqueda
+            Busqueda: Busqueda,
+            Carrito: Carrito
         }
         
         for F in clase_frames:
@@ -663,8 +663,7 @@ class Reserva(tk.Frame):
             text="Ingresar", 
             command = lambda: [
                 acumulador_precios.append(seleccionar_cantidad_entradas.get()),
-                self.precio_total.set(ingresar_valor_unitario(self, acumulador_precios))
-                ]
+                ingresar_valor_unitario(self, acumulador_precios)]
         )
 
         boton_random1.grid(row=2, column=0)
@@ -684,6 +683,25 @@ class Reserva(tk.Frame):
 
     def actualizar_cine_id(self, cine_id):
         self.cine_id = cine_id
+
+
+class Carrito(tk.Frame):
+
+    def __init__(self, parent,
+                 controller, cine_id, peli_id, precios):
+        
+        tk.Frame.__init__(self, parent)
+
+        self.cine_id = cine_id
+        self.peli_id = peli_id
+        self.precios = precios
+
+        tk.Label(self, text=self.cine_id).pack()
+        tk.Label(self, text=self.peli_id).pack()
+        tk.Label(self, text=self.precios).pack()
+
+        tk.Label(self, bg="red").pack()
+
 
 
 def main():     
