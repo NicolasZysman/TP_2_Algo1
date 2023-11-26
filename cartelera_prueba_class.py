@@ -758,15 +758,6 @@ class Reserva(tk.Frame):
 
         boton_random1.grid(row=2, column=0)
 
-        mostrar_precio_total = tk.Button(
-            self, 
-            text = "Mostrar Precio Total",
-            bg = "blue",
-            command = lambda: print(self.precio_total.get())
-            )
-        
-        mostrar_precio_total.grid(row = 3, column = 1)
-
         boton_volver = tk.Button(self, text="Volver", bg="red", 
                                  command = lambda: controller.show_frame(Pelicula, cine_id, peli_id))
         boton_volver.grid(row=11, column=0)
