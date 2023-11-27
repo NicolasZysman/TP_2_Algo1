@@ -630,7 +630,7 @@ class Busqueda(tk.Frame):
         self.lista_pelis_en_cine: list[int] = lista_pelis_en_cine
         self.entrada_busqueda: str = entrada_busqueda
 
-        canvas = tk.Canvas(self, height=1000, width=980) # width = el ancho de la ventana - 20px de scrollbar
+        canvas = tk.Canvas(self, height=1000, width=980, bg="green") # width = el ancho de la ventana - 20px de scrollbar
         canvas.pack(side="left", fill="both", expand=True)
 
         # Agregar scrollbar al canvas
