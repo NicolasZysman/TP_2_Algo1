@@ -626,22 +626,43 @@ class Busqueda(tk.Frame):
     
         tk.Frame.__init__(self, parent, bg="green")
 
-        cant_columnas: int = 8
-
-        for col in range(cant_columnas):
-            self.grid_columnconfigure(col, weight=1, minsize = 125)
-
-        titulo = tk.Label(self, text=f"Mostrando resultados para: {entrada_busqueda}")
-        titulo.grid(row = 0 , column = 2, columnspan = 2, pady = 10)
-
         self.cine_id: int = cine_id
         self.lista_pelis_en_cine: list[int] = lista_pelis_en_cine
         self.entrada_busqueda: str = entrada_busqueda
 
-        filtrar_busqueda(self, entrada_busqueda, controller, lista_pelis_en_cine, self.cine_id)
+        canvas = tk.Canvas(self, height=1000, width=980) # width = el ancho de la ventana - 20px de scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+
+        # Agregar scrollbar al canvas
+        scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        scrollbar.pack(side="right", fill="y", expand=True)
+
+        # Configuracion canvas
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion = canvas.bbox("all")))
+
+        # Crear frame en el canvas
+        # segundo_frame = tk.Frame(canvas, bg="green")
+
+        # Crear frame en el canvas
+        segundo_frame = tk.Frame(canvas, bg="green")
+
+        # Agregar el segundo frame a una ventana en el canvas
+        canvas.create_window((0,0), window=segundo_frame, anchor="nw")
+
+        cant_columnas: int = 8
+
+        for col in range(cant_columnas):
+            segundo_frame.grid_columnconfigure(col, weight=1, minsize = 125)
+
+        titulo = tk.Label(segundo_frame, text=f"Mostrando resultados para: {entrada_busqueda}")
+        titulo.grid(row = 0 , column = 2, columnspan = 2, pady = 10)
+
+
+        filtrar_busqueda(segundo_frame, entrada_busqueda, controller, lista_pelis_en_cine, self.cine_id)
 
         
-        boton_volver = tk.Button(self, text="Volver a Cartelera", command = lambda: controller.show_frame(Cartelera, cine_id))
+        boton_volver = tk.Button(segundo_frame, text="Volver a Cartelera", command = lambda: controller.show_frame(Cartelera, cine_id))
         boton_volver.grid(row = 1 , column = 2, columnspan = 2, pady = 10)
 
 
