@@ -716,6 +716,13 @@ class Cartelera(tk.Frame):
                                    command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine,entrada_busqueda_peli.get()))
         boton_busqueda.grid(row = 2, column = 2, columnspan= 2, pady=10)
 
+        volver_al_menu = tk.Button(
+            segundo_frame,
+            text="Volver al menu",
+            command=lambda: controller.show_frame(Ubicacion),
+        )
+        volver_al_menu.grid(row = 2, column = 3, columnspan= 2, padx=10, pady=10)
+
         posters_cartelera(segundo_frame, lista_posters, 
                           lista_pelis_en_cine, controller, self.cine_id)
 
@@ -880,10 +887,10 @@ class Carrito(tk.Frame):
         img = qrcode.make(data)
 
         try:
-            img.save(f"QR/Qr{random_id}.png")
+            img.save(f"QR/qr{random_id}.png")
         except FileNotFoundError:
             os.mkdir("QR") # crear la carpeta si no existe
-            img.save(f"QR/Qr{random_id}.png")
+            img.save(f"QR/qr{random_id}.png")
         except Exception as e:
             raise SystemExit(e)
 
