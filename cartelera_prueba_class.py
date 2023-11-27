@@ -14,7 +14,7 @@ from random import randint
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 INDICE_CANTIDAD_ENTRADAS: int = 0
 INDICE_VALOR_UNITARIO: int = 1
-
+ 
 def autorizacion() -> dict:
     '''
     Pre: XXX
