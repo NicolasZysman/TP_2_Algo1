@@ -451,6 +451,10 @@ def filtrar_busqueda(ventana, get_entry: str,
         # tk.Label(ventana, text= "No se encuentra la pelicula en este cine").grid(row = 2 , column = 2, columnspan = 2, pady = 10)
         messagebox.showerror("Error", "No se encuentra la pelicula en este cine")
         controller.show_frame(Cartelera, cine_id)
+
+    if get_entry == "":
+        messagebox.showerror("Error", "No ha ingresado una pelicula")
+        controller.show_frame(Cartelera, cine_id)
         
     lista_posters = lista_img_posters(poster_id)
 
