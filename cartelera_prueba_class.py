@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-# import os
+import os
 import qrcode
 import requests
 from PIL import ImageTk,Image
@@ -720,6 +720,13 @@ class Cartelera(tk.Frame):
                                    command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine,entrada_busqueda_peli.get()))
         boton_busqueda.grid(row = 2, column = 2, columnspan= 2, pady=10)
 
+        volver_al_menu = tk.Button(
+            segundo_frame,
+            text="Volver al menu",
+            command=lambda: controller.show_frame(Ubicacion),
+        )
+        volver_al_menu.grid(row = 2, column = 3, columnspan= 2, padx=10, pady=10)
+
         posters_cartelera(segundo_frame, lista_posters, 
                           lista_pelis_en_cine, controller, self.cine_id)
 
@@ -882,7 +889,14 @@ class Carrito(tk.Frame):
         raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}{dt}")
         data = raw_data.replace(" ", "")
         img = qrcode.make(data)
-        img.save(f"QR/Qr{random_id}.png")
+
+        try:
+            img.save(f"QR/qr{random_id}.png")
+        except FileNotFoundError:
+            os.mkdir("QR") # crear la carpeta si no existe
+            img.save(f"QR/qr{random_id}.png")
+        except Exception as e:
+            raise SystemExit(e)
 
 def main():     
     app = ventanas()
