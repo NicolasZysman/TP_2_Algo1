@@ -14,7 +14,7 @@ from random import randint
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 INDICE_CANTIDAD_ENTRADAS: int = 0
 INDICE_VALOR_UNITARIO: int = 1
-
+ 
 def autorizacion() -> dict:
     '''
     Pre: XXX
@@ -450,6 +450,10 @@ def filtrar_busqueda(ventana, get_entry: str,
     if len(pelis_encontradas) == 0:
         # tk.Label(ventana, text= "No se encuentra la pelicula en este cine").grid(row = 2 , column = 2, columnspan = 2, pady = 10)
         messagebox.showerror("Error", "No se encuentra la pelicula en este cine")
+        controller.show_frame(Cartelera, cine_id)
+
+    if get_entry == "":
+        messagebox.showerror("Error", "No ha ingresado una pelicula")
         controller.show_frame(Cartelera, cine_id)
         
     lista_posters = lista_img_posters(poster_id)
