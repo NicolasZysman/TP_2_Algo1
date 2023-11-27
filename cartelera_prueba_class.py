@@ -448,12 +448,15 @@ def filtrar_busqueda(ventana, get_entry: str,
 
 
     if len(pelis_encontradas) == 0:
-        tk.Label(ventana, text= "No se encuentra la pelicula en este cine").grid(row = 2 , column = 2, columnspan = 2, pady = 10)
+        # tk.Label(ventana, text= "No se encuentra la pelicula en este cine").grid(row = 2 , column = 2, columnspan = 2, pady = 10)
+        messagebox.showerror("Error", "No se encuentra la pelicula en este cine")
+        controller.show_frame(Cartelera, cine_id)
         
     lista_posters = lista_img_posters(poster_id)
 
-    posters_busqueda(ventana, lista_posters, 
-                     id_peliculas, controller, cine_id)
+    if len(pelis_encontradas) >= 1:
+        posters_busqueda(ventana, lista_posters, 
+                        id_peliculas, controller, cine_id)
 
 
 def posters_cartelera(ventana, lista_posters: list[str], 
