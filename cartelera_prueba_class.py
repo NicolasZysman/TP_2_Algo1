@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-# import os
+import os
 import qrcode
 import requests
 from PIL import ImageTk,Image
@@ -878,7 +878,14 @@ class Carrito(tk.Frame):
         raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}{dt}")
         data = raw_data.replace(" ", "")
         img = qrcode.make(data)
-        img.save(f"QR/Qr{random_id}.png")
+
+        try:
+            img.save(f"QR/Qr{random_id}.png")
+        except FileNotFoundError:
+            os.mkdir("QR") # crear la carpeta si no existe
+            img.save(f"QR/Qr{random_id}.png")
+        except Exception as e:
+            raise SystemExit(e)
 
 def main():     
     app = ventanas()
