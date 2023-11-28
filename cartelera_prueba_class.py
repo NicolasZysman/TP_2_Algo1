@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-# import os
+import os
 import qrcode
 import requests
 from PIL import ImageTk,Image
@@ -14,7 +14,7 @@ from random import randint
 API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.DGI_v9bwNm_kSrC-CQSb3dBFzxOlrtBDHcEGXvCFqgU"
 INDICE_CANTIDAD_ENTRADAS: int = 0
 INDICE_VALOR_UNITARIO: int = 1
-
+ 
 def autorizacion() -> dict:
     '''
     Pre: XXX
@@ -337,11 +337,9 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list) -> None:
         iterador_columna: int = 0
 
         mostrar_snack = tk.Label(self, text=snack)
-        mostrar_valor = tk.Button(
-            self, 
-            text="Pagar " + valor, 
-            command = lambda i = valor: acumulador_precios.append(i)
-            )
+        mostrar_valor = tk.Button(self, text="Pagar " + valor, command = lambda i = valor: [acumulador_precios.append(i), contador(self, i, acumulador_precios)])
+        restar_snack = tk.Button(self, text="-", command=lambda i=valor, snack=snack: [restar(i, acumulador_precios, snack), contador(self, i, acumulador_precios)])
+        # sumar_carrito = tk.Button(self, text="+")
 
         mostrar_snack.grid(row=iterador_fila, column=iterador_columna)
         iterador_columna += 1
@@ -349,7 +347,26 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list) -> None:
         mostrar_valor.grid(row=iterador_fila, column=iterador_columna)
         iterador_columna += 1
 
+        restar_snack.grid(row=iterador_fila, column=iterador_columna)
+        iterador_columna += 1
+
+        # sumar_carrito.grid(row=iterador_fila, column=iterador_columna)
+        # iterador_columna += 1
+
         iterador_fila += 1
+
+
+def contador(self, i, acumulador_precios):
+
+    cantidad_snack = acumulador_precios.count(i)
+    tk.Label(self, text=cantidad_snack).grid()
+
+def restar(i, acumulador_precios, snack):
+
+    if i in acumulador_precios:
+        acumulador_precios.remove(i)
+    else:
+        messagebox.showerror("Error", f"No seleccionaste {snack} todavia")
 
 
 def añadir_botones_reserva(self, controller, 
@@ -431,12 +448,19 @@ def filtrar_busqueda(ventana, get_entry: str,
 
 
     if len(pelis_encontradas) == 0:
-        tk.Label(ventana, text= "No se encuentra la pelicula en este cine").pack(pady = 10)
+        # tk.Label(ventana, text= "No se encuentra la pelicula en este cine").grid(row = 2 , column = 2, columnspan = 2, pady = 10)
+        messagebox.showerror("Error", "No se encuentra la pelicula en este cine")
+        controller.show_frame(Cartelera, cine_id)
+
+    if get_entry == "":
+        messagebox.showerror("Error", "No ha ingresado una pelicula")
+        controller.show_frame(Cartelera, cine_id)
         
     lista_posters = lista_img_posters(poster_id)
 
-    posters_busqueda(ventana, lista_posters, 
-                     id_peliculas, controller, cine_id)
+    if len(pelis_encontradas) >= 1:
+        posters_busqueda(ventana, lista_posters, 
+                        id_peliculas, controller, cine_id)
 
 
 def posters_cartelera(ventana, lista_posters: list[str], 
@@ -485,6 +509,9 @@ def posters_busqueda(ventana, lista_posters: list[str],
     si se apreta un poster te lleva a su ventana con su info
     '''
 
+    columna = 1
+    fila = 9
+
     for i, poster in enumerate(lista_posters):
 
             tk_imagen = convertir_imagen(poster)
@@ -498,7 +525,15 @@ def posters_busqueda(ventana, lista_posters: list[str],
                 image=tk_imagen, 
                 command = lambda boton_apretado=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(boton_apretado, id_peliculas))
             )
-            boton.pack()
+            boton.grid(row=fila, column = columna, pady = 10)
+
+            if columna == 4:
+                fila += 1
+
+            if columna == 1:
+                columna = 4
+            else:
+                columna = 1
             # boton.grid(row=3, column=2)
 
 
@@ -594,25 +629,48 @@ class Ubicacion(tk.Frame):
 class Busqueda(tk.Frame):
 
     def __init__(self, parent, 
-                 controller, cine_id: int, lista_pelis_en_cine: list[int]):
+                 controller, cine_id: int, lista_pelis_en_cine: list[int], entrada_busqueda: str):
     
-        tk.Frame.__init__(self, parent)
-
-        titulo = tk.Label(self, text="Ingrese pelicula...")
-        titulo.pack(pady = 10)
+        tk.Frame.__init__(self, parent, bg="green")
 
         self.cine_id: int = cine_id
         self.lista_pelis_en_cine: list[int] = lista_pelis_en_cine
+        self.entrada_busqueda: str = entrada_busqueda
+
+        canvas = tk.Canvas(self, height=1000, width=980, bg="green") # width = el ancho de la ventana - 20px de scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+
+        # Agregar scrollbar al canvas
+        scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        scrollbar.pack(side="right", fill="y", expand=True)
+
+        # Configuracion canvas
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion = canvas.bbox("all")))
+
+        # Crear frame en el canvas
+        # segundo_frame = tk.Frame(canvas, bg="green")
+
+        # Crear frame en el canvas
+        segundo_frame = tk.Frame(canvas, bg="green")
+
+        # Agregar el segundo frame a una ventana en el canvas
+        canvas.create_window((0,0), window=segundo_frame, anchor="nw")
+
+        cant_columnas: int = 8
+
+        for col in range(cant_columnas):
+            segundo_frame.grid_columnconfigure(col, weight=1, minsize = 125)
+
+        titulo = tk.Label(segundo_frame, text=f"Mostrando resultados para: {entrada_busqueda}")
+        titulo.grid(row = 0 , column = 2, columnspan = 2, pady = 10)
 
 
-        entrada_busqueda_peli = tk.Entry(self)
-        entrada_busqueda_peli.pack(pady = 10)
+        filtrar_busqueda(segundo_frame, entrada_busqueda, controller, lista_pelis_en_cine, self.cine_id)
 
-        boton_busqueda = tk.Button(self, text = "Enter", command = lambda: [filtrar_busqueda(self, entrada_busqueda_peli.get(), controller, lista_pelis_en_cine, self.cine_id)])
-        boton_busqueda.pack()
         
-        boton_volver = tk.Button(self, text="Volver a Cartelera", command = lambda: controller.show_frame(Cartelera, cine_id))
-        boton_volver.pack()
+        boton_volver = tk.Button(segundo_frame, text="Volver a Cartelera", command = lambda: controller.show_frame(Cartelera, cine_id))
+        boton_volver.grid(row = 1 , column = 2, columnspan = 2, pady = 10)
 
 
 class Cartelera(tk.Frame):
@@ -655,9 +713,19 @@ class Cartelera(tk.Frame):
         ubicacion: str = info_cines[self.cine_id - 1]["location"]
         tk.Label(segundo_frame, text=ubicacion).grid(row = 0 , column = 2, columnspan = 2, pady = 10)
 
+        entrada_busqueda_peli = tk.Entry(segundo_frame)
+        entrada_busqueda_peli.grid(row = 1, column = 2, columnspan= 2)
+
         boton_busqueda = tk.Button(segundo_frame, text = "Buscar pelicula...", 
-                                   command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine))
-        boton_busqueda.grid(row = 1, column = 2, columnspan= 2)
+                                   command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine,entrada_busqueda_peli.get()))
+        boton_busqueda.grid(row = 2, column = 2, columnspan= 2, pady=10)
+
+        volver_al_menu = tk.Button(
+            segundo_frame,
+            text="Volver al menu",
+            command=lambda: controller.show_frame(Ubicacion),
+        )
+        volver_al_menu.grid(row = 2, column = 3, columnspan= 2, padx=10, pady=10)
 
         posters_cartelera(segundo_frame, lista_posters, 
                           lista_pelis_en_cine, controller, self.cine_id)
@@ -821,7 +889,14 @@ class Carrito(tk.Frame):
         raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}{dt}")
         data = raw_data.replace(" ", "")
         img = qrcode.make(data)
-        img.save(f"QR/Qr{random_id}.png")
+
+        try:
+            img.save(f"QR/qr{random_id}.png")
+        except FileNotFoundError:
+            os.mkdir("QR") # crear la carpeta si no existe
+            img.save(f"QR/qr{random_id}.png")
+        except Exception as e:
+            raise SystemExit(e)
 
 def main():     
     app = ventanas()
