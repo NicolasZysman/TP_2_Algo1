@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import messagebox
+import os
 import cv2
 
 class ventanas(tk.Tk):
@@ -70,7 +72,9 @@ class IngresarID(tk.Frame):
         )
         volver_al_menu.pack(side="bottom", fill=tk.X)
 
-        entry = tk.Entry(self)
+        validacion = (self.register(validar_mensaje), "%P")
+
+        entry = tk.Entry(self, width=35, borderwidth=2, validate = "key", validatecommand = validacion)
         entry.pack(padx=10, pady=10, fill=tk.X)
 
         entry_button = tk.Button(
@@ -101,6 +105,15 @@ class LeerQR(tk.Frame):
         )
         escanear.pack(padx=10, pady=10, fill=tk.X)
 
+def validar_mensaje(texto: str) -> bool:
+    validacion: bool = False
+    if texto.isnumeric() == True or texto == "":
+        validacion = True
+    else:
+        messagebox.showerror("Error", "Por favor, ingrese solo números enteros.")
+
+    return validacion
+
 def guardar(informacion: str): # timestamp, Id_QR, nombre_pelicula, cant_entradas, total_consumido
     with open("ingresos.txt", "a") as archivo:
         linea = informacion + "\n"
@@ -115,16 +128,18 @@ def extraer_datos(string): # Id_QR, nombre_pelicula, ubicacion, cant_entradas, t
     total_consumido = lista_datos[4]
     timestamp = lista_datos[5]
     
-    sting_ordenado = f"{timestamp}, {id_qr}, {nombre_pelicula}, {cant_entradas}, {total_consumido}"
+    string_ordenado = f"{timestamp}, {id_qr}, {nombre_pelicula}, {cant_entradas}, {total_consumido}"
 
-    return sting_ordenado
+    return string_ordenado
 
 def detectar_qr_archivo(id_qr: str):
-    img = cv2.imread(f"QR/qr{id_qr}.pdf")
-    detect = cv2.QRCodeDetector()
-    value = detect.detectAndDecode(img)
-
-    guardar(extraer_datos(value[0]))
+    if os.path.isfile(f"QR/qr{id_qr}.pdf"):
+        img = cv2.imread(f"QR/qr{id_qr}.pdf")
+        detect = cv2.QRCodeDetector()
+        value = detect.detectAndDecode(img)
+        guardar(extraer_datos(value[0]))
+    else:
+        messagebox.showerror("Error", "El ID especificado no existe.")
 
 def detectar_qr_webcam():
     camera_id = 0
