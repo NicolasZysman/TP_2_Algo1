@@ -876,6 +876,7 @@ class Carrito(tk.Frame):
         ubicacion: str = info_cines[self.cine_id - 1]["location"]
 
         cantidad_entradas = precios["Cantidad entradas"]
+        precio_total = precios["Precio Total"]
 
         tk.Label(self, text=self.cine_id).pack()
         tk.Label(self, text=self.peli_id).pack()
@@ -884,7 +885,7 @@ class Carrito(tk.Frame):
         tk.Label(self, bg="red").pack()
 
         boton_qr = tk.Button(self, text="Finalizar Compra", 
-                             command = lambda: [self.generar_qr(nombre, ubicacion, cantidad_entradas), 
+                             command = lambda: [self.generar_qr(nombre, ubicacion, cantidad_entradas, precio_total), 
                                                 controller.show_frame(Cartelera, cine_id)])
         boton_qr.pack()
 
@@ -898,10 +899,10 @@ class Carrito(tk.Frame):
         #     'Precio total': 10700
         # }
 
-    def generar_qr(self, nombre: str, ubicacion: str, cantidad_entradas: int) -> None:
+    def generar_qr(self, nombre: str, ubicacion: str, cantidad_entradas: int, precio_total: int) -> None:
         random_id = randint(1, 5000)
         dt = datetime.now()
-        raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}_{dt}")
+        raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}{precio_total}{dt}")
         data = raw_data.replace(" ", "")
         img = qrcode.make(data)
 
