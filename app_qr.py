@@ -101,18 +101,19 @@ class LeerQR(tk.Frame):
         )
         escanear.pack(padx=10, pady=10, fill=tk.X)
 
-def guardar(id_qr: str):
+def guardar(informacion: str): # timestamp, Id_QR, nombre_película, cant_entradas, total_consumido
+    with open("ingresos.txt", "a") as archivo:
+        linea = informacion + "\n"
+        archivo.write(linea)
 
+def detectar_qr_archivo(id_qr: str) -> str:
     img = cv2.imread(f"QR/qr{id_qr}.pdf")
     detect = cv2.QRCodeDetector()
     value = detect.detectAndDecode(img)
 
-    with open("ingresos.txt", "a") as archivo:
-        linea = value[0] + "\n"
-        archivo.write(linea)
+    return value[0] # Id_QR, nombre_película, cant_entradas, total_consumido, timestamp
 
-
-def detectar_qr():
+def detectar_qr_webcam():
     camera_id = 0
     delay = 1
     window_name = 'OpenCV QR Code'
