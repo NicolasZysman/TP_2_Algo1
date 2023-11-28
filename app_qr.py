@@ -76,7 +76,7 @@ class IngresarID(tk.Frame):
         entry_button = tk.Button(
             self,
             text="OK",
-            command=lambda: (guardar(entry.get()), entry.delete(0, tk.END)),
+            command=lambda: (detectar_qr_archivo(entry.get()), entry.delete(0, tk.END)),
         )
         entry_button.pack(padx=10, pady=10, fill=tk.X)
 
@@ -97,21 +97,34 @@ class LeerQR(tk.Frame):
         escanear = tk.Button(
             self,
             text="Escanear QR",
-            command=lambda: detectar_qr(),
+            command=lambda: detectar_qr_webcam(),
         )
         escanear.pack(padx=10, pady=10, fill=tk.X)
 
-def guardar(informacion: str): # timestamp, Id_QR, nombre_película, cant_entradas, total_consumido
+def guardar(informacion: str): # timestamp, Id_QR, nombre_pelicula, cant_entradas, total_consumido
     with open("ingresos.txt", "a") as archivo:
         linea = informacion + "\n"
         archivo.write(linea)
 
-def detectar_qr_archivo(id_qr: str) -> str:
+def extraer_datos(string): # Id_QR, nombre_pelicula, ubicacion, cant_entradas, total_consumido, timestamp
+    lista_datos = string.split("_")
+    
+    id_qr = lista_datos[0]
+    nombre_pelicula = lista_datos[1]
+    cant_entradas = lista_datos[3]
+    total_consumido = lista_datos[4]
+    timestamp = lista_datos[5]
+    
+    sting_ordenado = f"{timestamp}, {id_qr}, {nombre_pelicula}, {cant_entradas}, {total_consumido}"
+
+    return sting_ordenado
+
+def detectar_qr_archivo(id_qr: str):
     img = cv2.imread(f"QR/qr{id_qr}.pdf")
     detect = cv2.QRCodeDetector()
     value = detect.detectAndDecode(img)
 
-    return value[0] # Id_QR, nombre_película, cant_entradas, total_consumido, timestamp
+    guardar(extraer_datos(value[0]))
 
 def detectar_qr_webcam():
     camera_id = 0
@@ -129,8 +142,8 @@ def detectar_qr_webcam():
         if ret:
             ret_qr, decoded_info, _, _ = qcd.detectAndDecodeMulti(frame)
             if ret_qr and decoded_info[0]:
+                guardar(extraer_datos(decoded_info[0]))
                 exit = True
-                return decoded_info[0]
             cv2.imshow(window_name, frame)
 
         if cv2.waitKey(delay) & 0xFF == ord('q'): # q para salir
