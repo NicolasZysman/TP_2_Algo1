@@ -336,10 +336,28 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list) -> None:
         
         iterador_columna: int = 0
 
-        mostrar_snack = tk.Label(self, text=snack)
-        mostrar_valor = tk.Button(self, text="Pagar " + valor, command = lambda i = valor: [acumulador_precios.append(i), contador(self, i, acumulador_precios)])
-        restar_snack = tk.Button(self, text="-", command=lambda i=valor, snack=snack: [restar(i, acumulador_precios, snack), contador(self, i, acumulador_precios)])
-        # sumar_carrito = tk.Button(self, text="+")
+        mostrar_snack = tk.Label(
+            self, 
+            text=snack
+        )
+
+        mostrar_valor = tk.Button(
+            self, 
+            text = "Pagar " + valor, 
+            command = lambda i = valor, fila = iterador_fila: [
+                acumulador_precios.append(i), 
+                contador(self, i, acumulador_precios, fila)
+            ]
+        )
+
+        restar_snack = tk.Button(
+            self, 
+            text = "-", 
+            command = lambda i = valor, snack = snack, fila = iterador_fila: [
+                restar(i, acumulador_precios, snack), 
+                contador(self, i, acumulador_precios, fila)
+            ]
+        )
 
         mostrar_snack.grid(row=iterador_fila, column=iterador_columna)
         iterador_columna += 1
@@ -350,16 +368,13 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list) -> None:
         restar_snack.grid(row=iterador_fila, column=iterador_columna)
         iterador_columna += 1
 
-        # sumar_carrito.grid(row=iterador_fila, column=iterador_columna)
-        # iterador_columna += 1
-
         iterador_fila += 1
 
 
-def contador(self, i, acumulador_precios):
+def contador(self, i, acumulador_precios, fila: int):
 
     cantidad_snack = acumulador_precios.count(i)
-    tk.Label(self, text=cantidad_snack).grid()
+    tk.Label(self, text=cantidad_snack).grid(row = fila, column = 4)
 
 def restar(i, acumulador_precios, snack):
 
