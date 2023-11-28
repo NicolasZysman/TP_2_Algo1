@@ -76,7 +76,7 @@ class IngresarID(tk.Frame):
         entry_button = tk.Button(
             self,
             text="OK",
-            command=lambda: (guardar(entry.get()), entry.delete(0, tk.END)), # pasa el texto a la funcion y despues lo borra
+            command=lambda: (guardar(entry.get()), entry.delete(0, tk.END)),
         )
         entry_button.pack(padx=10, pady=10, fill=tk.X)
 
@@ -101,10 +101,16 @@ class LeerQR(tk.Frame):
         )
         escanear.pack(padx=10, pady=10, fill=tk.X)
 
-def guardar(informacion): # timestamp, Id_QR, nombre_película, cant_entradas, total_consumido
+def guardar(id_qr: str):
+
+    img = cv2.imread(f"QR/qr{id_qr}.png")
+    detect = cv2.QRCodeDetector()
+    value = detect.detectAndDecode(img)
+
     with open("ingresos.txt", "a") as archivo:
-        linea = informacion + "\n"
+        linea = value[0] + "\n"
         archivo.write(linea)
+
 
 def detectar_qr():
     camera_id = 0
