@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import cv2
 
 class ventanas(tk.Tk):
@@ -70,7 +71,9 @@ class IngresarID(tk.Frame):
         )
         volver_al_menu.pack(side="bottom", fill=tk.X)
 
-        entry = tk.Entry(self)
+        validacion = (self.register(validar_mensaje), "%P")
+
+        entry = tk.Entry(self, width=35, borderwidth=2, validate = "key", validatecommand = validacion)
         entry.pack(padx=10, pady=10, fill=tk.X)
 
         entry_button = tk.Button(
@@ -100,6 +103,15 @@ class LeerQR(tk.Frame):
             command=lambda: detectar_qr_webcam(),
         )
         escanear.pack(padx=10, pady=10, fill=tk.X)
+
+def validar_mensaje(texto: str) -> bool:
+    validacion: bool = False
+    if texto.isnumeric() == True or texto == "":
+        validacion = True
+    else:
+        messagebox.showerror("Error", "Por favor, ingrese solo números enteros.")
+
+    return validacion
 
 def guardar(informacion: str): # timestamp, Id_QR, nombre_pelicula, cant_entradas, total_consumido
     with open("ingresos.txt", "a") as archivo:
