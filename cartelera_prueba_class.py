@@ -337,17 +337,17 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list) -> None:
         iterador_columna: int = 0
 
         mostrar_snack = tk.Label(self, text=snack)
-        mostrar_valor = tk.Button(self, text="Pagar " + valor, command = lambda i = valor: acumulador_precios.append(i))
-        # sumar_carrito = tk.Button(self, text="+")
+        mostrar_valor = tk.Button(
+            self, 
+            text="Pagar " + valor, 
+            command = lambda i = valor: acumulador_precios.append(i)
+            )
 
         mostrar_snack.grid(row=iterador_fila, column=iterador_columna)
         iterador_columna += 1
 
         mostrar_valor.grid(row=iterador_fila, column=iterador_columna)
         iterador_columna += 1
-
-        # sumar_carrito.grid(row=iterador_fila, column=iterador_columna)
-        # iterador_columna += 1
 
         iterador_fila += 1
 
