@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import messagebox
+import os
 import cv2
 
 class ventanas(tk.Tk):
@@ -70,13 +72,15 @@ class IngresarID(tk.Frame):
         )
         volver_al_menu.pack(side="bottom", fill=tk.X)
 
-        entry = tk.Entry(self)
+        validacion = (self.register(validar_mensaje), "%P")
+
+        entry = tk.Entry(self, width=35, borderwidth=2, validate = "key", validatecommand = validacion)
         entry.pack(padx=10, pady=10, fill=tk.X)
 
         entry_button = tk.Button(
             self,
             text="OK",
-            command=lambda: (guardar(entry.get()), entry.delete(0, tk.END)), # pasa el texto a la funcion y despues lo borra
+            command=lambda: (detectar_qr_archivo(entry.get()), entry.delete(0, tk.END)),
         )
         entry_button.pack(padx=10, pady=10, fill=tk.X)
 
@@ -97,16 +101,47 @@ class LeerQR(tk.Frame):
         escanear = tk.Button(
             self,
             text="Escanear QR",
-            command=lambda: detectar_qr(),
+            command=lambda: detectar_qr_webcam(),
         )
         escanear.pack(padx=10, pady=10, fill=tk.X)
 
-def guardar(informacion): # timestamp, Id_QR, nombre_película, cant_entradas, total_consumido
+def validar_mensaje(texto: str) -> bool:
+    validacion: bool = False
+    if texto.isnumeric() == True or texto == "":
+        validacion = True
+    else:
+        messagebox.showerror("Error", "Por favor, ingrese solo números enteros.")
+
+    return validacion
+
+def guardar(informacion: str): # timestamp, Id_QR, nombre_pelicula, cant_entradas, total_consumido
     with open("ingresos.txt", "a") as archivo:
         linea = informacion + "\n"
         archivo.write(linea)
 
-def detectar_qr():
+def extraer_datos(string): # Id_QR, nombre_pelicula, ubicacion, cant_entradas, total_consumido, timestamp
+    lista_datos = string.split("_")
+    
+    id_qr = lista_datos[0]
+    nombre_pelicula = lista_datos[1]
+    cant_entradas = lista_datos[3]
+    total_consumido = lista_datos[4]
+    timestamp = lista_datos[5]
+    
+    string_ordenado = f"{timestamp}, {id_qr}, {nombre_pelicula}, {cant_entradas}, {total_consumido}"
+
+    return string_ordenado
+
+def detectar_qr_archivo(id_qr: str):
+    if os.path.isfile(f"QR/qr{id_qr}.pdf"):
+        img = cv2.imread(f"QR/qr{id_qr}.pdf")
+        detect = cv2.QRCodeDetector()
+        value = detect.detectAndDecode(img)
+        guardar(extraer_datos(value[0]))
+    else:
+        messagebox.showerror("Error", "El ID especificado no existe.")
+
+def detectar_qr_webcam():
     camera_id = 0
     delay = 1
     window_name = 'OpenCV QR Code'
@@ -121,8 +156,8 @@ def detectar_qr():
 
         if ret:
             ret_qr, decoded_info, _, _ = qcd.detectAndDecodeMulti(frame)
-            if ret_qr:
-                print(decoded_info)
+            if ret_qr and decoded_info[0]:
+                guardar(extraer_datos(decoded_info[0]))
                 exit = True
             cv2.imshow(window_name, frame)
 

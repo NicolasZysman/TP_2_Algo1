@@ -263,6 +263,10 @@ def obtener_ubicaciones_pelicula(info_proyeccion: list, ubicaciones: list[str]) 
 
 
 def suma_total(acumulador_precios: list) -> float:
+    '''
+    Pre: Recibe una lista con los precios acumulados de la reserva
+    Post: Devuelve un float indicando el valor total a pagar por el usuario
+    '''
     precio_total: float = 0
     contador_entradas: int = 0
     cantidad_entradas: int = 0
@@ -288,6 +292,11 @@ def suma_total(acumulador_precios: list) -> float:
     return precio_total
 
 def cantidad_snacks_elegidos(acumulador_precios: list, info_snacks: dict) -> dict:
+    '''
+    Pre: Recibe una lista con los precios de la reserva y un diccionario con los snacks
+         y sus precios
+    Post: Devuelve un diccionario con las unidades de snacks elegidas
+    '''
     snacks: dict = {}
 
     for elemento in range(len(acumulador_precios)):
@@ -310,6 +319,11 @@ def cantidad_snacks_elegidos(acumulador_precios: list, info_snacks: dict) -> dic
 
 
 def mostrar_compra(acumulador_precios: list, info_snacks: dict) -> dict:
+    '''
+    Pre: Recibe una lista con los precios de la reserva y un diccionario con los snacks
+         y sus precios
+    Post: Devuelve un diccionario listando toda la compra del usuario (entradas, snacks y precios)
+    '''
     compra: dict = {}
 
     compra["Cantidad entradas"] = acumulador_precios[INDICE_CANTIDAD_ENTRADAS]
@@ -372,12 +386,22 @@ def imprimir_snacks(self, info_snacks: dict, acumulador_precios: list) -> None:
         iterador_fila += 1
 
 
-def contador(self, i, acumulador_precios, fila: int):
+def contador(self, i, acumulador_precios, fila: int) -> None:
+    '''
+    Pre: Recibe la ventana actual, i representando un entero,
+         el acumulador de precios, y una fila especifica
+    Post: Realiza un procedimiento contando los snacks y mostrando por ventana
+    '''
 
     cantidad_snack = acumulador_precios.count(i)
     tk.Label(self, text=cantidad_snack).grid(row = fila, column = 4)
 
-def restar(i, acumulador_precios, snack):
+
+def restar(i, acumulador_precios, snack) -> None:
+    '''
+    Pre: Recibe un entero, el acumulador de los precios y un snack especifico
+    Post: Elimina el snack seleccionado del acumulador
+    '''
 
     if i in acumulador_precios:
         acumulador_precios.remove(i)
@@ -554,7 +578,7 @@ def posters_busqueda(ventana, lista_posters: list[str],
             # boton.grid(row=3, column=2)
 
 
-def encontrar_peli_id(i, lista_pelis_en_cine) -> int:
+def encontrar_peli_id(i: int, lista_pelis_en_cine: list[int]) -> int:
     '''
     Pre: Recibe un int de boton_apretado y una lista
     de id de pelis en cine
@@ -950,6 +974,7 @@ class Carrito(tk.Frame):
         ubicacion: str = info_cines[self.cine_id - 1]["location"]
 
         cantidad_entradas = precios["Cantidad entradas"]
+        precio_total = precios["Precio Total"]
 
         tk.Label(self, text=self.cine_id).pack()
         tk.Label(self, text=self.peli_id).pack()
@@ -958,7 +983,7 @@ class Carrito(tk.Frame):
         tk.Label(self, bg="red").pack()
 
         boton_qr = tk.Button(self, text="Finalizar Compra", 
-                             command = lambda: [self.generar_qr(nombre, ubicacion, cantidad_entradas), 
+                             command = lambda: [self.generar_qr(nombre, ubicacion, cantidad_entradas, precio_total), 
                                                 controller.show_frame(Cartelera, cine_id, asientos_actuales)])
         boton_qr.pack()
 
@@ -972,22 +997,27 @@ class Carrito(tk.Frame):
         #     'Precio total': 10700
         # }
 
-    def generar_qr(self, nombre: str, ubicacion: str, cantidad_entradas: int) -> None:
+    def generar_qr(self, nombre: str, ubicacion: str, cantidad_entradas: int, precio_total: int) -> None:
+        '''
+        Pre: Recibe la ventana, el nombre de la pelicula, su ubicacion, cantidad de entradas
+             y el precio total a pagar
+        Post: Genera el QR a escanear y lo guarda en un archivo pdf
+        '''
         random_id = randint(1, 5000)
         dt = datetime.now()
-        raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}_{dt}")
+        raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}_{precio_total}_{dt}")
         data = raw_data.replace(" ", "")
         img = qrcode.make(data)
 
         try:
-            img.save(f"QR/qr{random_id}.png")
+            img.save(f"QR/qr{random_id}.pdf")
         except FileNotFoundError:
             os.mkdir("QR") # crear la carpeta si no existe
-            img.save(f"QR/qr{random_id}.png")
+            img.save(f"QR/qr{random_id}.pdf")
         except Exception as e:
             raise SystemExit(e)
 
-def main():     
+def main() -> None:     
     app = ventanas()
     app.mainloop()
 
