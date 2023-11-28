@@ -902,7 +902,7 @@ class Carrito(tk.Frame):
     def generar_qr(self, nombre: str, ubicacion: str, cantidad_entradas: int, precio_total: int) -> None:
         random_id = randint(1, 5000)
         dt = datetime.now()
-        raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}{precio_total}{dt}")
+        raw_data = (f"{random_id}_{nombre}_{ubicacion}_{cantidad_entradas}_{precio_total}_{dt}")
         data = raw_data.replace(" ", "")
         img = qrcode.make(data)
 
