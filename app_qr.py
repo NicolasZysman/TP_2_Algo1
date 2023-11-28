@@ -127,9 +127,9 @@ def detectar_qr():
 
         if ret:
             ret_qr, decoded_info, _, _ = qcd.detectAndDecodeMulti(frame)
-            if ret_qr:
-                print(decoded_info)
+            if ret_qr and decoded_info[0]:
                 exit = True
+                return decoded_info[0]
             cv2.imshow(window_name, frame)
 
         if cv2.waitKey(delay) & 0xFF == ord('q'): # q para salir
