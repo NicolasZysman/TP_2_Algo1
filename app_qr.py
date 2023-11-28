@@ -103,7 +103,7 @@ class LeerQR(tk.Frame):
 
 def guardar(id_qr: str):
 
-    img = cv2.imread(f"QR/qr{id_qr}.png")
+    img = cv2.imread(f"QR/qr{id_qr}.pdf")
     detect = cv2.QRCodeDetector()
     value = detect.detectAndDecode(img)
 

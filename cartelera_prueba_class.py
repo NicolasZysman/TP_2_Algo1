@@ -907,10 +907,10 @@ class Carrito(tk.Frame):
         img = qrcode.make(data)
 
         try:
-            img.save(f"QR/qr{random_id}.png")
+            img.save(f"QR/qr{random_id}.pdf")
         except FileNotFoundError:
             os.mkdir("QR") # crear la carpeta si no existe
-            img.save(f"QR/qr{random_id}.png")
+            img.save(f"QR/qr{random_id}.pdf")
         except Exception as e:
             raise SystemExit(e)
 
