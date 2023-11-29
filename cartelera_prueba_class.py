@@ -423,7 +423,7 @@ def calcular_asientos_totales(cine_id: int):
 
     return asientos_totales
 
-def añadir_botones_reserva(self, controller, cine_id: int, peli_id: int, acumulador_precios: list, asientos_actuales: int) -> None:
+def añadir_botones_reserva(self, controller, cine_id: int, peli_id: int, acumulador_precios: list, asientos_actuales: int, cantidad_asientos: dict) -> None:
     '''
     Pre: Recibe la ventana actual, el controller, un int de cine_id,
     un int de peli_id y una lista de precios
@@ -443,22 +443,28 @@ def añadir_botones_reserva(self, controller, cine_id: int, peli_id: int, acumul
         self, 
         text="Añadir al carro", 
         bg="green" , 
-        command = lambda: controller.show_frame(Carrito, cine_id, peli_id, mostrar_compra(acumulador_precios, info_snacks), asientos_actuales) 
+        command = lambda: controller.show_frame(Carrito, cine_id, peli_id, mostrar_compra(acumulador_precios, info_snacks), cantidad_asientos) 
     )
 
     agregar.grid(row=11, column=1)
 
-def analizar_texto(texto: str, self, controller, cine_id, peli_id, acumulador_precios: list, asientos_actuales: int) -> None:
+def analizar_texto(texto: str, self, controller, cine_id, peli_id, acumulador_precios: list, asientos_actuales: int, cantidad_asientos) -> None:
     if texto == "":
         messagebox.showerror("Error", "No ingresaste nada, por favor ingrese numeros.")
     else:
         acumulador_precios.append(int(texto))
         acumulador_precios.append(PRECIO_ENTRADA)
+
+        asientos_actualizados: int = asientos_actuales - int(texto)
+        cantidad_asientos[str(cine_id)] = asientos_actualizados
+
+        print(cantidad_asientos)
+
         print(asientos_actuales, "Analizar texto")
-        añadir_botones_reserva(self, controller, cine_id, peli_id, acumulador_precios, asientos_actuales)
+        añadir_botones_reserva(self, controller, cine_id, peli_id, acumulador_precios, asientos_actuales, cantidad_asientos)
 
 def filtrar_busqueda(ventana, get_entry: str, 
-        controller, lista_pelis_en_cine: list, cine_id: int, asientos_actuales: int) -> None:
+        controller, lista_pelis_en_cine: list, cine_id: int, cantidad_asientos: dict) -> None:
     '''
     Pre: Recibe la ventana actual, el nombre de la peli que busca
     el usuario, el controller, las pelis en el cine actual y un int de 
@@ -491,21 +497,21 @@ def filtrar_busqueda(ventana, get_entry: str,
     if len(pelis_encontradas) == 0:
         # tk.Label(ventana, text= "No se encuentra la pelicula en este cine").grid(row = 2 , column = 2, columnspan = 2, pady = 10)
         messagebox.showerror("Error", "No se encuentra la pelicula en este cine")
-        controller.show_frame(Cartelera, cine_id, asientos_actuales)
+        controller.show_frame(Cartelera, cine_id, cantidad_asientos)
 
     if get_entry == "":
         messagebox.showerror("Error", "No ha ingresado una pelicula")
-        controller.show_frame(Cartelera, cine_id, asientos_actuales)
+        controller.show_frame(Cartelera, cine_id, cantidad_asientos)
         
     lista_posters = lista_img_posters(poster_id)
 
     if len(pelis_encontradas) >= 1:
         posters_busqueda(ventana, lista_posters, 
-                        id_peliculas, controller, cine_id, asientos_actuales)
+                        id_peliculas, controller, cine_id, cantidad_asientos)
 
 
 def posters_cartelera(ventana, lista_posters: list[str], 
-                      lista_pelis_en_cine: list[int], controller, cine_id: int, asientos_actuales: int) -> None:
+                      lista_pelis_en_cine: list[int], controller, cine_id: int, cantidad_asientos: dict) -> None:
     '''
     Pre: Recibe la ventana actual, una lista de posters, una
     lista de pelis en cine, el controller u un int de cine_id
@@ -527,7 +533,7 @@ def posters_cartelera(ventana, lista_posters: list[str],
             boton = tk.Button(
                 ventana, 
                 image=tk_imagen, 
-                command = lambda i=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(i, lista_pelis_en_cine), asientos_actuales)
+                command = lambda i=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(i, lista_pelis_en_cine), cantidad_asientos)
             )
             boton.grid(row=fila, column = columna, pady = 10)
 
@@ -542,7 +548,7 @@ def posters_cartelera(ventana, lista_posters: list[str],
 
 
 def posters_busqueda(ventana, lista_posters: list[str], 
-                     id_peliculas: list[int], controller, cine_id: int, asientos_actuales: int) -> None:
+                     id_peliculas: list[int], controller, cine_id: int, cantidad_asientos: dict) -> None:
     '''
     Pre: Recibe la ventana actual, una lista de posters, una
     lista de id de pelis en cine, el controller u un int de cine_id
@@ -564,7 +570,7 @@ def posters_busqueda(ventana, lista_posters: list[str],
             boton = tk.Button(
                 ventana, 
                 image=tk_imagen, 
-                command = lambda boton_apretado=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(boton_apretado, id_peliculas), asientos_actuales)
+                command = lambda boton_apretado=i: controller.show_frame(Pelicula, cine_id, encontrar_peli_id(boton_apretado, id_peliculas), cantidad_asientos)
             )
             boton.grid(row=fila, column = columna, pady = 10)
 
@@ -642,6 +648,10 @@ class ventanas(tk.Tk):
 
         self.container = tk.Frame(self, height=500, width=500)
         self.container.pack(side="top", fill="both", expand=True)
+
+        cantidad_asientos: dict = {}
+
+        calcular_asientos(cantidad_asientos)
         
         self.frames: dict = {}
         
@@ -657,7 +667,7 @@ class ventanas(tk.Tk):
         for F in clase_frames:
             self.frames[F] = None
 
-        self.show_frame(Ubicacion)
+        self.show_frame(Ubicacion, cantidad_asientos)
 
     def show_frame(self, clase, *args):
         '''
@@ -680,14 +690,13 @@ class ventanas(tk.Tk):
 
 class Ubicacion(tk.Frame):
     
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, cantidad_asientos):
         
         tk.Frame.__init__(self, parent)
 
         cant_columnas: int = 7
-        cantidad_asientos: dict = {}
 
-        calcular_asientos(cantidad_asientos)
+        self.cantidad_asientos = cantidad_asientos
 
         print(cantidad_asientos)
 
@@ -702,7 +711,7 @@ class Ubicacion(tk.Frame):
                 boton = tk.Button(
                     self,
                     text=ubicacion,
-                    command = lambda cine_id=i + 1: controller.show_frame(Cartelera, cine_id, calcular_asientos_totales(cine_id))
+                    command = lambda cine_id=i + 1: controller.show_frame(Cartelera, cine_id, cantidad_asientos)
                 )
                 boton.grid(row=0, column=i, padx = 5, sticky="nsew")
     
@@ -710,16 +719,16 @@ class Ubicacion(tk.Frame):
 class Busqueda(tk.Frame):
 
     def __init__(self, parent, 
-                 controller, cine_id: int, lista_pelis_en_cine: list[int], entrada_busqueda: str, asientos_actuales):
+                 controller, cine_id: int, lista_pelis_en_cine: list[int], entrada_busqueda: str, cantidad_asientos: dict):
     
         tk.Frame.__init__(self, parent, bg="green")
 
-        print(asientos_actuales, "Busqueda")
+        # print(asientos_actuales, "Busqueda")
 
         self.cine_id: int = cine_id
         self.lista_pelis_en_cine: list[int] = lista_pelis_en_cine
         self.entrada_busqueda: str = entrada_busqueda
-        self.asientos_actuales = asientos_actuales
+        self.cantidad_asientos = cantidad_asientos
 
         canvas = tk.Canvas(self, height=1000, width=980, bg="green") # width = el ancho de la ventana - 20px de scrollbar
         canvas.pack(side="left", fill="both", expand=True)
@@ -750,10 +759,10 @@ class Busqueda(tk.Frame):
         titulo.grid(row = 0 , column = 2, columnspan = 2, pady = 10)
 
 
-        filtrar_busqueda(segundo_frame, entrada_busqueda, controller, lista_pelis_en_cine, self.cine_id, asientos_actuales)
+        filtrar_busqueda(segundo_frame, entrada_busqueda, controller, lista_pelis_en_cine, self.cine_id, cantidad_asientos)
 
         
-        boton_volver = tk.Button(segundo_frame, text="Volver a Cartelera", command = lambda: controller.show_frame(Cartelera, cine_id, asientos_actuales))
+        boton_volver = tk.Button(segundo_frame, text="Volver a Cartelera", command = lambda: controller.show_frame(Cartelera, cine_id, cantidad_asientos))
         boton_volver.grid(row = 1 , column = 2, columnspan = 2, pady = 10)
 
 
@@ -764,12 +773,12 @@ class Cartelera(tk.Frame):
             parent, 
             controller, 
             cine_id: int, 
-            asientos_actuales: int
+            cantidad_asientos: dict
     ):
         
         tk.Frame.__init__(self, parent)
 
-        print(asientos_actuales, "Cartelera")
+        # print(asientos_actuales, "Cartelera")
 
         # Crear canvas
         canvas = tk.Canvas(self, height=1000, width=980) # width = el ancho de la ventana - 20px de scrollbar
@@ -796,7 +805,7 @@ class Cartelera(tk.Frame):
             
 
         self.cine_id: int = cine_id
-        self.asientos_actuales = asientos_actuales
+        self.cantidad_asientos = cantidad_asientos
         info_cines: list[dict] = get_cines()
         lista_pelis_en_cine: list[int] = id_pelis_en_cine(self.cine_id)
         posters_id: list[int] = lista_poster_id(lista_pelis_en_cine)
@@ -809,18 +818,18 @@ class Cartelera(tk.Frame):
         entrada_busqueda_peli.grid(row = 1, column = 2, columnspan= 2)
 
         boton_busqueda = tk.Button(segundo_frame, text = "Buscar pelicula...", 
-                                   command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine,entrada_busqueda_peli.get(), asientos_actuales))
+                                   command = lambda: controller.show_frame(Busqueda, cine_id, lista_pelis_en_cine,entrada_busqueda_peli.get(), cantidad_asientos))
         boton_busqueda.grid(row = 2, column = 2, columnspan= 2, pady=10)
 
         volver_al_menu = tk.Button(
             segundo_frame,
             text="Volver al menu",
-            command=lambda: controller.show_frame(Ubicacion),
+            command=lambda: controller.show_frame(Ubicacion, cantidad_asientos),
         )
         volver_al_menu.grid(row = 2, column = 3, columnspan= 2, padx=10, pady=10)
 
         posters_cartelera(segundo_frame, lista_posters, 
-                          lista_pelis_en_cine, controller, self.cine_id, asientos_actuales)
+                          lista_pelis_en_cine, controller, self.cine_id, cantidad_asientos)
 
     def actualizar_cine_id(self, cine_id):
         self.cine_id = cine_id
@@ -829,15 +838,15 @@ class Cartelera(tk.Frame):
 class Pelicula(tk.Frame):
 
     def __init__(self, parent, 
-                 controller, cine_id: int, peli_id: int, asientos_actuales: int):
+                 controller, cine_id: int, peli_id: int, cantidad_asientos: dict):
         
         tk.Frame.__init__(self, parent)
 
-        print(asientos_actuales, "Busqueda")
+        # print(asientos_actuales, "Busqueda")
 
         self.peli_id: int = peli_id
         self.cine_id: int = cine_id
-        self.asientos_actuales = asientos_actuales
+        self.cantidad_asientos = cantidad_asientos
         info_peli: list[dict] = get_pelicula_por_Id(peli_id)
         info_cines: list[dict] = get_cines()
         info_proyeccion: list = get_proyeccion(peli_id)
@@ -881,19 +890,21 @@ class Pelicula(tk.Frame):
         tk.Label(self, text=peli_en_cine).pack()
 
         asientos: int = info_cines[cine_id - 1]["available_seats"]
+
+        asientos_actuales: int = cantidad_asientos[str(cine_id)]
         
-        print(asientos_actuales)
+        # print(asientos_actuales)
         if(asientos_actuales >= 1):
 
             boton_reserva = tk.Button(self, text="Reservar", bg="green", 
-                                      command = lambda: controller.show_frame(Reserva, cine_id, peli_id, asientos_actuales))
+                                      command = lambda: controller.show_frame(Reserva, cine_id, peli_id, cantidad_asientos, asientos_actuales))
             boton_reserva.pack()
         else:
             tk.Label(self, text="No hay asientos disponibles", bg="red").pack()
 
         
         boton_volver = tk.Button(self, text="Volver", 
-                                 command = lambda: controller.show_frame(Cartelera, cine_id, asientos_actuales))
+                                 command = lambda: controller.show_frame(Cartelera, cine_id, cantidad_asientos))
         boton_volver.pack()
 
     def actualizar_cine_id(self, cine_id):
@@ -902,15 +913,16 @@ class Pelicula(tk.Frame):
 
 class Reserva(tk.Frame):
     
-    def __init__(self, parent, controller, cine_id: int, peli_id: int, asientos_actuales: int):
+    def __init__(self, parent, controller, cine_id: int, peli_id: int, cantidad_asientos: dict, asientos_actuales: int):
         
         tk.Frame.__init__(self, parent)
 
-        print(asientos_actuales, "Reserva")
+        # print(asientos_actuales, "Reserva")
 
         self.cine_id: int = cine_id
         self.peli_id: int = peli_id
         self.asientos_actuales = asientos_actuales
+        self.cantidad_asientos = cantidad_asientos
 
         acumulador_precios: list = []
 
@@ -934,7 +946,8 @@ class Reserva(tk.Frame):
                         cine_id, 
                         peli_id, 
                         acumulador_precios,
-                        calcular_asientos_actuales(seleccionar_cantidad_entradas.get(), asientos_actuales)
+                        asientos_actuales,
+                        cantidad_asientos
                         )
         )
 
@@ -956,16 +969,16 @@ class Reserva(tk.Frame):
 
 class Carrito(tk.Frame):
 
-    def __init__(self, parent, controller, cine_id, peli_id, precios, asientos_actuales: int):
+    def __init__(self, parent, controller, cine_id, peli_id, precios, cantidad_asientos: dict):
         
         tk.Frame.__init__(self, parent)
 
-        print(asientos_actuales, "Carrito")
+        # print(asientos_actuales, "Carrito")
 
         self.cine_id: int = cine_id
         self.peli_id: int = peli_id
         self.precios = precios
-        self.asientos_actuales = asientos_actuales
+        self.cantidad_asientos = cantidad_asientos
 
         info_peli = get_pelicula_por_Id(self.peli_id)
         nombre: str = info_peli["name"]
@@ -984,7 +997,7 @@ class Carrito(tk.Frame):
 
         boton_qr = tk.Button(self, text="Finalizar Compra", 
                              command = lambda: [self.generar_qr(nombre, ubicacion, cantidad_entradas, precio_total), 
-                                                controller.show_frame(Cartelera, cine_id, asientos_actuales)])
+                                                controller.show_frame(Cartelera, cine_id, cantidad_asientos)])
         boton_qr.pack()
 
         # precios = {
