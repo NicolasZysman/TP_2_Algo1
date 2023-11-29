@@ -98,12 +98,15 @@ class LeerQR(tk.Frame):
         )
         volver_al_menu.pack(side="bottom", fill=tk.X)
 
+        instrucciones = tk.Label(self, text="Click para escanear el QR con la webcam.\nPresione 'q' para cancelar.")
+        instrucciones.pack(side="bottom", padx=10, pady=30, fill=tk.X)
+
         escanear = tk.Button(
             self,
             text="Escanear QR",
             command=lambda: detectar_qr_webcam(),
         )
-        escanear.pack(padx=10, pady=10, fill=tk.X)
+        escanear.pack(side="bottom", padx=10, pady=10, fill=tk.X)
 
 def validar_mensaje(texto: str) -> bool:
     validacion: bool = False
