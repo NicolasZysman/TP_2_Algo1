@@ -638,6 +638,26 @@ def calcular_asientos(cantidad_asientos: dict) -> None:
 
             cantidad_asientos[lugar] = numero_asientos
 
+def formatear_texto(texto: str) -> str:
+    '''
+    Pre: Recibe un texto sin saltos de linea.
+    Post: Devuelve un texto con saltos de linea cada 80 caracteres aproximadamente
+    '''
+    texto_formateado: str = ""
+    flag: bool = False
+
+    for i in range(len(texto)):
+        if i != 0 and i % 80 == 0: # cada 80 caracteres del texto
+            flag = True
+        
+        if flag and texto[i] == " ": # solamente agrega el salto de linea despues de un espacio
+            texto_formateado += f"{texto[i]}\n"
+            flag = False
+        else:
+            texto_formateado += texto[i]
+    
+    return texto_formateado
+
 class ventanas(tk.Tk):
     
     def __init__(self, *args, **kwargs):
@@ -867,8 +887,8 @@ class Pelicula(tk.Frame):
         nombre: str = info_peli["name"]
         tk.Label(self, text=nombre).pack()
 
-        # sinopsis = info_peli["synopsis"] Da error no se porque
-        # tk.Label(self, text=sinopsis).pack()
+        sinopsis = formatear_texto(info_peli["synopsis"])
+        tk.Label(self, justify="left", text=sinopsis).pack()
 
         genero: str = info_peli["gender"]
         tk.Label(self, text=genero).pack()
