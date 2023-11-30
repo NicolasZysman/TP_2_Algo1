@@ -356,6 +356,37 @@ def mostrar_compra(
 
     return compra
 
+def contador(
+        self, 
+        i, 
+        acumulador_precios, 
+        fila: int
+) -> None:
+    '''
+    Pre: Recibe la ventana actual, i representando un entero,
+         el acumulador de precios, y una fila especifica
+    Post: Realiza un procedimiento contando los snacks y mostrando por ventana
+    '''
+
+    cantidad_snack = acumulador_precios.count(i)
+    tk.Label(self, text=cantidad_snack).grid(row = fila, column = 4)
+
+
+def restar(
+        i, 
+        acumulador_precios, 
+        snack
+) -> None:
+    '''
+    Pre: Recibe un entero, el acumulador de los precios y un snack especifico
+    Post: Elimina el snack seleccionado del acumulador
+    '''
+
+    if i in acumulador_precios:
+        acumulador_precios.remove(i)
+    else:
+        messagebox.showerror("Error", f"No seleccionaste {snack} todavia")
+
 
 def imprimir_snacks(
         self, 
@@ -409,37 +440,6 @@ def imprimir_snacks(
         iterador_fila += 1
 
 
-def contador(
-        self, 
-        i, 
-        acumulador_precios, 
-        fila: int
-) -> None:
-    '''
-    Pre: Recibe la ventana actual, i representando un entero,
-         el acumulador de precios, y una fila especifica
-    Post: Realiza un procedimiento contando los snacks y mostrando por ventana
-    '''
-
-    cantidad_snack = acumulador_precios.count(i)
-    tk.Label(self, text=cantidad_snack).grid(row = fila, column = 4)
-
-
-def restar(
-        i, 
-        acumulador_precios, 
-        snack
-) -> None:
-    '''
-    Pre: Recibe un entero, el acumulador de los precios y un snack especifico
-    Post: Elimina el snack seleccionado del acumulador
-    '''
-
-    if i in acumulador_precios:
-        acumulador_precios.remove(i)
-    else:
-        messagebox.showerror("Error", f"No seleccionaste {snack} todavia")
-
 def añadir_botones_reserva(
         self, 
         controller,  
@@ -466,6 +466,19 @@ def añadir_botones_reserva(
 
     agregar.grid(row=11, column=1)
 
+def mostrar_entradas(
+        self, 
+        cantidad_entradas: int
+):
+    '''
+    Pre: Recibe la cantidad de entradas que ingreso el usuario
+    Pos: Crea una etiqueta donde muestra la cantidad de entradas
+         que ingreso el usuario
+    '''
+    nueva_etiqueta = tk.Label(self, text = f"Cantidad de entradas: {cantidad_entradas}")
+    nueva_etiqueta.grid(row = 0, column = 0, padx = 15)
+
+
 def analizar_texto(
         texto: str, 
         self, 
@@ -474,6 +487,13 @@ def analizar_texto(
         inventario: list,
         etiquetas_a_eliminar: list
 ) -> None:
+    '''
+    Pre: La funcion recibe lo que ingreso el usuario en el input,
+         una lista vacia que se usara mas adelante, inventario con variables
+         y las etiquetas que seran eliminadas y reemplazadas
+    Pos: verifica que el input no este vacio. En el caso contrario se borran
+         algunas etiquetas y se actualizan los asientos
+    '''
     
     cantidad_asientos: dict = inventario[INDICE_CANTIDAD_ASIENTOS]
     cine_id: int = inventario[INDICE_CINE_ID]
@@ -499,6 +519,63 @@ def analizar_texto(
         cantidad_asientos[str(cine_id)] = asientos_actualizados
 
         añadir_botones_reserva(self, controller, acumulador_precios, inventario)
+
+def encontrar_peli_id(
+        i: int, 
+        lista_pelis_en_cine: list[int]
+) -> int:
+    '''
+    Pre: Recibe un int de boton_apretado y una lista
+    de id de pelis en cine
+    Post: Devuelve el id de pelicula
+    '''
+    
+    peli_id = lista_pelis_en_cine[i]
+    return peli_id
+
+
+def posters_busqueda(
+        ventana, 
+        lista_posters: list[str], 
+        id_peliculas: list[int], 
+        controller, 
+        inventario: list
+) -> None:
+    '''
+    Pre: Recibe la ventana actual, una lista de posters, una
+    lista de id de pelis en cine, el controller u un int de cine_id
+    Post: Recorre la lista de posters y los muestra como botones.
+    si se apreta un poster te lleva a su ventana con su info
+    '''
+
+    columna = 1
+    fila = 9
+
+    for i, poster in enumerate(lista_posters):
+
+            tk_imagen = convertir_imagen(poster)
+
+            etiqueta = tk.Label(ventana, image=tk_imagen)
+            
+            etiqueta.image = tk_imagen 
+
+            boton = tk.Button(
+                ventana, 
+                image=tk_imagen, 
+                command = lambda boton_apretado=i: [
+                    inventario.append(encontrar_peli_id(boton_apretado, id_peliculas)),
+                    controller.crear_y_mostrar_frame(Pelicula, inventario)
+                ]
+            )
+            boton.grid(row=fila, column = columna, pady = 10)
+
+            if columna == 4:
+                fila += 1
+
+            if columna == 1:
+                columna = 4
+            else:
+                columna = 1
 
 def filtrar_busqueda(
         ventana, 
@@ -604,71 +681,35 @@ def posters_cartelera(
             if columna == 1:
                 columna = 4
             else:
-                columna = 1
-            
+                columna = 1                    
 
-
-def posters_busqueda(
-        ventana, 
-        lista_posters: list[str], 
-        id_peliculas: list[int], 
-        controller, 
-        inventario: list
-) -> None:
+def calcular_asientos_actuales(
+        texto: str, 
+        asientos_totales: int
+):
     '''
-    Pre: Recibe la ventana actual, una lista de posters, una
-    lista de id de pelis en cine, el controller u un int de cine_id
-    Post: Recorre la lista de posters y los muestra como botones.
-    si se apreta un poster te lleva a su ventana con su info
+    Pre: Recibe el input que ingreso el usuario y
+         los asientos que hay en el cine
+    Pos: Resta los asientos que hay en el cine por
+         la cantidad que ingreso el usuario
     '''
-
-    columna = 1
-    fila = 9
-
-    for i, poster in enumerate(lista_posters):
-
-            tk_imagen = convertir_imagen(poster)
-
-            etiqueta = tk.Label(ventana, image=tk_imagen)
-            
-            etiqueta.image = tk_imagen 
-
-            boton = tk.Button(
-                ventana, 
-                image=tk_imagen, 
-                command = lambda boton_apretado=i: [
-                    inventario.append(encontrar_peli_id(boton_apretado, id_peliculas)),
-                    controller.crear_y_mostrar_frame(Pelicula, inventario)
-                ]
-            )
-            boton.grid(row=fila, column = columna, pady = 10)
-
-            if columna == 4:
-                fila += 1
-
-            if columna == 1:
-                columna = 4
-            else:
-                columna = 1         
-
-
-def encontrar_peli_id(
-        i: int, 
-        lista_pelis_en_cine: list[int]
-) -> int:
-    '''
-    Pre: Recibe un int de boton_apretado y una lista
-    de id de pelis en cine
-    Post: Devuelve el id de pelicula
-    '''
+    asientos_actualizados: int = 0
+    if texto.isnumeric() == True:
+        asientos_actualizados = int(asientos_totales) - int(texto)
     
-    peli_id = lista_pelis_en_cine[i]
-    return peli_id
+    return asientos_actualizados
 
 def validar_mensaje(
         texto: str, 
         asientos_totales: int
 ) -> bool:
+    '''
+    Pre: Recibe el input que ingreso el usuario y la cantidad
+         de asientos totales que se encuentran en el cine.
+    Pos: Verifica que el usuario no ingrese caracteres que no sean
+         numeros enteros y que no ingrese una cantidad de entradas
+         mayor a los asientos que se encuentran.
+    '''
     validacion: bool = False
 
     asientos_actuales: int = calcular_asientos_actuales(texto, asientos_totales)
@@ -684,16 +725,6 @@ def validar_mensaje(
         messagebox.showerror("Error", "Por favor, ingrese solo números enteros.")
 
     return validacion
-
-def calcular_asientos_actuales(
-        texto: str, 
-        asientos_totales: int
-):
-    asientos_actualizados: int = 0
-    if texto.isnumeric() == True:
-        asientos_actualizados = int(asientos_totales) - int(texto)
-    
-    return asientos_actualizados
 
 
 def calcular_asientos(cantidad_asientos: dict) -> None:
@@ -741,20 +772,15 @@ def formatear_texto(texto: str) -> str:
     return texto_formateado
 
 
-def snacks_elegidas(snacks_dic: dict):
-
-    string_snacks = []
-    
-    if len(snacks_dic) >= 1:
-        for producto in snacks_dic:
-            string_snacks += producto + " "
-    else:
-        string_snacks += "No se han elegido snacks"
-
-        return string_snacks
-
-
 def remover_elementos_inventario(inventario: list, indice_elemento: int) -> None:
+    '''
+    Pre: Recibe un inventario con distintas variables
+         y el indice donde se encuentra la variable que
+         se quiere eliminar
+    Pos: Recorre elemento por elemento en el inventario y
+         una vez que se encuentre en el indice que recibio la
+         funcion, elimina lo que se encuentra en ese elemento
+    '''
     contador: int = 0
 
     for elemento in inventario:
@@ -765,14 +791,6 @@ def remover_elementos_inventario(inventario: list, indice_elemento: int) -> None
 
         else:
             contador += 1
-
-
-def mostrar_entradas(
-        self, 
-        cantidad_entradas: int
-):
-    nueva_etiqueta = tk.Label(self, text = f"Cantidad de entradas: {cantidad_entradas}")
-    nueva_etiqueta.grid(row = 0, column = 0, padx = 15)
 
 
 class ventanas(tk.Tk):
