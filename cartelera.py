@@ -21,7 +21,7 @@ INDICE_PELI_ID: int = 2
 INDICE_ASIENTOS_ACTUALES: int = 3
 
 INDICE_ETIQUETA: int = 0
-INDICE_CANTIDAD_ENTRADAS: int = 1
+INDICE_INGRESAR_ENTRADAS: int = 1
 INDICE_INGRESO: int = 2
 
 PRECIO_ENTRADA: int = 4400
@@ -484,7 +484,7 @@ def analizar_texto(
     else:
 
         etiqueta = etiquetas_a_eliminar[INDICE_ETIQUETA]
-        cantidad_entradas = etiquetas_a_eliminar[INDICE_CANTIDAD_ENTRADAS]
+        cantidad_entradas = etiquetas_a_eliminar[INDICE_INGRESAR_ENTRADAS]
         ingreso = etiquetas_a_eliminar[INDICE_INGRESO]
 
         mostrar_entradas(self, texto),
@@ -772,7 +772,7 @@ def mostrar_entradas(
         cantidad_entradas: int
 ):
     nueva_etiqueta = tk.Label(self, text = f"Cantidad de entradas: {cantidad_entradas}")
-    nueva_etiqueta.grid(row = 0, column = 0)
+    nueva_etiqueta.grid(row = 0, column = 0, padx = 15)
 
 
 class ventanas(tk.Tk):
@@ -1074,20 +1074,20 @@ class Reserva(tk.Frame):
         acumulador_precios: list = []
 
         etiqueta = tk.Label(self, text="Ingrese la cantidad de entradas")
-        etiqueta.grid(row=0, column=0)
+        etiqueta.grid(row=0, column=0, padx = 15)
 
         validacion = (self.register(validar_mensaje), "%P", asientos_actuales)
 
-        cantidad_entradas = tk.Entry(
+        ingresar_entradas = tk.Entry(
             self, 
-            width=35, 
-            borderwidth=2, 
+            width = 25, 
+            borderwidth = 2, 
             validate = "key", 
             validatecommand = validacion
         )
-        cantidad_entradas.grid(row=1, column=0)
+        ingresar_entradas.grid(row=1, column=0)
 
-        etiquetas_a_eliminar: list = [etiqueta, cantidad_entradas]
+        etiquetas_a_eliminar: list = [etiqueta, ingresar_entradas]
 
         ingreso = tk.Button(
                 self, 
@@ -1095,7 +1095,7 @@ class Reserva(tk.Frame):
                 command = lambda: [
                     etiquetas_a_eliminar.append(ingreso),
                     analizar_texto(
-                            cantidad_entradas.get(), 
+                            ingresar_entradas.get(), 
                             self, 
                             controller, 
                             acumulador_precios,
