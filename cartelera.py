@@ -1272,9 +1272,11 @@ class Carrito(tk.Frame):
 
         try:
             img.save(f"QR/qr{random_id}.pdf")
+            messagebox.showinfo("Info", f"El id es {random_id}")
         except FileNotFoundError:
             os.mkdir("QR")
             img.save(f"QR/qr{random_id}.pdf")
+            messagebox.showinfo("Info", f"El id es {random_id}")
         except Exception as e:
             raise SystemExit(e)
 
