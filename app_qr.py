@@ -121,6 +121,7 @@ def guardar(informacion: str): # timestamp, Id_QR, nombre_pelicula, cant_entrada
     with open("ingresos.txt", "a") as archivo:
         linea = informacion + "\n"
         archivo.write(linea)
+    messagebox.showinfo("Info", "Se leyo el QR correctamente")
 
 def extraer_datos(string): # Id_QR, nombre_pelicula, ubicacion, cant_entradas, total_consumido, timestamp
     lista_datos = string.split("_")
