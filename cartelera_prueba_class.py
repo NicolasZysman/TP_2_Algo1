@@ -4,7 +4,6 @@ import os
 import qrcode
 import requests
 from PIL import ImageTk,Image
-import cv2
 from io import BytesIO
 import base64
 from datetime import datetime
@@ -22,7 +21,8 @@ INDICE_PELI_ID: int = 2
 INDICE_ASIENTOS_ACTUALES: int = 3
 
 PRECIO_ENTRADA: int = 4400
- 
+
+
 def autorizacion() -> dict:
     '''
     Pre: XXX
@@ -45,9 +45,9 @@ def get_peliculas() -> list[dict]:
 
     try:
         respuesta = requests.get("http://vps-3701198-x.dattaweb.com:4000/movies", headers = header)
-        respuesta.raise_for_status() # Esto es necesario para que tambien agarre los errores HTTP
+        respuesta.raise_for_status()
     except requests.exceptions.RequestException as e:
-        raise SystemExit(e) # Termina el programa y muestra el error
+        raise SystemExit(e) 
     
     info_peliculas: list[dict] = respuesta.json()
 
@@ -161,7 +161,6 @@ def get_pelis_en_cine(cine_id: int) -> list[dict]:
     Post: Devuelve una lista de diccionarios con la info
           del endpoint /cinemas/movies_id/movies
     '''
-
 
     header = autorizacion()
 
@@ -521,9 +520,7 @@ def filtrar_busqueda(
             poster_id.append(pelicula["poster_id"])
             id_peliculas.append(pelicula["movie_id"])
 
-
     if len(pelis_encontradas) == 0:
-        # tk.Label(ventana, text= "No se encuentra la pelicula en este cine").grid(row = 2 , column = 2, columnspan = 2, pady = 10)
         messagebox.showerror("Error", "No se encuentra la pelicula en este cine")
         controller.show_frame(Cartelera, inventario)
 
@@ -593,7 +590,7 @@ def posters_cartelera(
                 columna = 4
             else:
                 columna = 1
-            # boton.grid(row=3, column=2)
+            
 
 
 def posters_busqueda(
@@ -618,7 +615,7 @@ def posters_busqueda(
             tk_imagen = convertir_imagen(poster)
 
             etiqueta = tk.Label(ventana, image=tk_imagen)
-            # etiqueta.grid(row=i+1, column=0, padx=10, pady=10)
+            
             etiqueta.image = tk_imagen 
 
             boton = tk.Button(
@@ -637,8 +634,7 @@ def posters_busqueda(
             if columna == 1:
                 columna = 4
             else:
-                columna = 1
-            # boton.grid(row=3, column=2)
+                columna = 1         
 
 
 def encontrar_peli_id(
@@ -684,6 +680,7 @@ def calcular_asientos_actuales(
     
     return asientos_actualizados
 
+
 def calcular_asientos(cantidad_asientos: dict) -> None:
 
     cines: list = get_cines()
@@ -702,6 +699,7 @@ def calcular_asientos(cantidad_asientos: dict) -> None:
 
             cantidad_asientos[lugar] = numero_asientos
 
+
 def formatear_texto(texto: str) -> str:
     '''
     Pre: Recibe un texto sin saltos de linea.
@@ -711,16 +709,30 @@ def formatear_texto(texto: str) -> str:
     flag: bool = False
 
     for i in range(len(texto)):
-        if i != 0 and i % 80 == 0: # cada 80 caracteres del texto
+        if i != 0 and i % 80 == 0:
             flag = True
         
-        if flag and texto[i] == " ": # solamente agrega el salto de linea despues de un espacio
+        if flag and texto[i] == " ":
             texto_formateado += f"{texto[i]}\n"
             flag = False
         else:
             texto_formateado += texto[i]
     
     return texto_formateado
+
+
+def snacks_elegidas(snacks_dic: dict):
+
+    string_snacks = ""
+
+    if len(snacks_dic) >= 1:
+        for producto in snacks_dic:
+            string_snacks += producto + " "
+    else:
+        string_snacks += "No se han elegido snacks"
+
+        return string_snacks
+
 
 def remover_elementos_inventario(inventario: list, indice_elemento: int) -> None:
     contador: int = 0
@@ -770,7 +782,8 @@ class ventanas(tk.Tk):
 
         self.show_frame(Ubicacion, inventario)
 
-    def show_frame(self, clase, *args):
+
+    def show_frame(self, clase, *args) -> None:
         '''
         Pre: Recibe la clase y uno o multiples
         argumentos
@@ -838,22 +851,16 @@ class Cartelera(tk.Frame):
         
         tk.Frame.__init__(self, parent)
 
-        # Crear canvas
-        canvas = tk.Canvas(self, height=1000, width=980) # width = el ancho de la ventana - 20px de scrollbar
+        canvas = tk.Canvas(self, height=1000, width=980)
         canvas.pack(side="left", fill="both", expand=True)
 
-        # Agregar scrollbar al canvas
         scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
         scrollbar.pack(side="right", fill="y", expand=True)
 
-        # Configuracion canvas
         canvas.configure(yscrollcommand=scrollbar.set)
         canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion = canvas.bbox("all")))
 
-        # Crear frame en el canvas
         segundo_frame = tk.Frame(canvas, bg="dark blue")
-
-        # Agregar el segundo frame a una ventana en el canvas
         canvas.create_window((0,0), window=segundo_frame, anchor="nw")
 
         cant_columnas: int = 8
@@ -972,8 +979,6 @@ class Pelicula(tk.Frame):
         pg_rating: int = info_peli["rating"]
         tk.Label(self, text=pg_rating).pack()
 
-        #con el id de la pelicula traer el id de los cines donde se proyecta
-        #con los ids meterlos en una lista y mostrarlos
         tk.Label(self, text=peli_en_cine).pack()
 
         asientos_actuales: int = cantidad_asientos[str(cine_id)]
@@ -1189,13 +1194,16 @@ class Carrito(tk.Frame):
         ubicacion: str = info_cines[self.cine_id - 1]["location"]
 
         cantidad_entradas = precios["Cantidad entradas"]
+        precio_entradas = precios["Cantidad entradas"] * precios["Valor unitario"]
+        snacks = precios["Snacks"]
         precio_total = precios["Precio Total"]
+        snacks_elegidos = snacks_elegidas(snacks)
+        
+        tk.Label(self, text = f"CINEPOLIS {ubicacion}", font=("Arial", 15)).pack()
+        tk.Label(self, text = f"Pelicula: {info_peli['name']}", font=("Arial", 10)).pack(pady = 5)
+        tk.Label(self, text = f"Cantidad de entradas: {cantidad_entradas} - $ {precio_entradas}\nSnacks elegidos: {snacks_elegidos}\nPrecio total de su compra: $ {precio_total}", font=("Arial", 10)).pack(pady=5)
+        print(precios)
 
-        tk.Label(self, text=self.cine_id).pack()
-        tk.Label(self, text=self.peli_id).pack()
-        tk.Label(self, text=self.precios).pack()
-
-        tk.Label(self, bg="red").pack()
 
         boton_qr = tk.Button(
             self, 
@@ -1223,15 +1231,6 @@ class Carrito(tk.Frame):
         )
         boton_qr.pack()
 
-        # precios = {
-        #     'Cantidad entradas': 2,
-        #     'Valor unitario': 100,
-        #     'Snacks': {
-        #         'doritos': 3,
-        #         'popcorn_xl': 1
-        #     },
-        #     'Precio total': 10700
-        # }
 
     def generar_qr(
             self, 
@@ -1254,10 +1253,11 @@ class Carrito(tk.Frame):
         try:
             img.save(f"QR/qr{random_id}.pdf")
         except FileNotFoundError:
-            os.mkdir("QR") # crear la carpeta si no existe
+            os.mkdir("QR")
             img.save(f"QR/qr{random_id}.pdf")
         except Exception as e:
             raise SystemExit(e)
+
 
 def main() -> None:     
     app = ventanas()
