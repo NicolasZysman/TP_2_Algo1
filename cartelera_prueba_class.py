@@ -746,6 +746,13 @@ def remover_elementos_inventario(inventario: list, indice_elemento: int) -> None
         else:
             contador += 1
         
+def mostrar_entradas(
+        self, 
+        cantidad_entradas: int
+):
+    nueva_etiqueta = tk.Label(self, text = f"Cantidad de entradas: {cantidad_entradas}")
+    nueva_etiqueta.grid(row = 0, column = 0)
+
 
 class ventanas(tk.Tk):
     
@@ -1064,13 +1071,19 @@ class Reserva(tk.Frame):
         ingreso = tk.Button(
             self, 
             text="Ingresar", 
-            command = lambda: analizar_texto(
+            command = lambda: [
+                analizar_texto(
                         seleccionar_cantidad_entradas.get(), 
                         self, 
                         controller, 
                         acumulador_precios,
                         inventario
-                        )
+                        ),
+                mostrar_entradas(self, seleccionar_cantidad_entradas.get()),
+                etiqueta_1.destroy(),
+                seleccionar_cantidad_entradas.destroy(),
+                ingreso.destroy()
+            ]
         )
 
         ingreso.grid(row=2, column=0)
