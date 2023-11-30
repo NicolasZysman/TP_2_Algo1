@@ -666,6 +666,19 @@ def formatear_texto(texto: str) -> str:
     return texto_formateado
 
 
+def snacks_elegidas(snacks_dic: dict):
+
+    string_snacks = ""
+
+    if len(snacks_dic) >= 1:
+        for producto in snacks_dic:
+            string_snacks += producto + " "
+    else:
+        string_snacks += "No se han elegido snacks"
+
+        return string_snacks
+
+
 class ventanas(tk.Tk):
     
     def __init__(self, *args, **kwargs):
@@ -990,13 +1003,16 @@ class Carrito(tk.Frame):
         ubicacion: str = info_cines[self.cine_id - 1]["location"]
 
         cantidad_entradas = precios["Cantidad entradas"]
+        precio_entradas = precios["Cantidad entradas"] * precios["Valor unitario"]
+        snacks = precios["Snacks"]
         precio_total = precios["Precio Total"]
+        snacks_elegidos = snacks_elegidas(snacks)
+        
+        tk.Label(self, text = f"CINEPOLIS {ubicacion}", font=("Arial", 15)).pack()
+        tk.Label(self, text = f"Pelicula: {info_peli['name']}", font=("Arial", 10)).pack(pady = 5)
+        tk.Label(self, text = f"Cantidad de entradas: {cantidad_entradas} - $ {precio_entradas}\nSnacks elegidos: {snacks_elegidos}\nPrecio total de su compra: $ {precio_total}", font=("Arial", 10)).pack(pady=5)
+        print(precios)
 
-        tk.Label(self, text=self.cine_id).pack()
-        tk.Label(self, text=self.peli_id).pack()
-        tk.Label(self, text=self.precios).pack()
-
-        tk.Label(self, bg="red").pack()
 
         boton_qr = tk.Button(self, text="Finalizar Compra", 
                              command = lambda: [self.generar_qr(nombre, ubicacion, cantidad_entradas, precio_total), 
