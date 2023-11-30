@@ -53,19 +53,19 @@ class MenuPrincipal(tk.Frame):
         )
         salir.pack(side="bottom", fill=tk.X)
 
-        switch_window_button1 = tk.Button(
+        boton_camara = tk.Button(
             self,
             text="Leer QR",
             command=lambda: controller.mostrar_frame(LeerQR),
         )
-        switch_window_button1.pack(side="bottom", fill=tk.X)
+        boton_camara.pack(side="bottom", fill=tk.X)
 
-        switch_window_button2 = tk.Button(
+        boton_id = tk.Button(
             self,
             text="Ingresar ID",
             command=lambda: controller.mostrar_frame(IngresarID),
         )
-        switch_window_button2.pack(side="bottom", fill=tk.X)
+        boton_id.pack(side="bottom", fill=tk.X)
 
 
 class IngresarID(tk.Frame):
@@ -88,12 +88,12 @@ class IngresarID(tk.Frame):
         entry = tk.Entry(self, width=35, borderwidth=2, validate = "key", validatecommand = validacion)
         entry.pack(padx=10, pady=10, fill=tk.X)
 
-        entry_button = tk.Button(
+        entry_boton = tk.Button(
             self,
             text="OK",
             command=lambda: (detectar_qr_archivo(entry.get()), entry.delete(0, tk.END)),
         )
-        entry_button.pack(padx=10, pady=10, fill=tk.X)
+        entry_boton.pack(padx=10, pady=10, fill=tk.X)
 
 
 class LeerQR(tk.Frame):
@@ -184,9 +184,9 @@ def detectar_qr_archivo(id_qr: str) -> None:
     if os.path.isfile(f"QR/qr{id_qr}.pdf"):
     
         img = cv2.imread(f"QR/qr{id_qr}.pdf")
-        detect = cv2.QRCodeDetector()
-        value = detect.detectAndDecode(img)
-        guardar(extraer_datos(value[0]))
+        detectar = cv2.QRCodeDetector()
+        valor = detectar.detectAndDecode(img)
+        guardar(extraer_datos(valor[0]))
     
     else:
         messagebox.showerror("Error", "El ID especificado no existe.")
@@ -198,12 +198,12 @@ def detectar_qr_webcam() -> None:
     Post: Lee con la camara el qr proporcionado y guarda la informacion
     '''
     
-    camera_id: int = 0
+    camara_id: int = 0
     delay: int = 1
-    window_name: str = 'OpenCV QR Code'
+    nombre_ventana: str = 'OpenCV QR Code'
 
     qcd = cv2.QRCodeDetector()
-    cap = cv2.VideoCapture(camera_id)
+    cap = cv2.VideoCapture(camara_id)
 
     exit: bool = False
 
@@ -221,12 +221,12 @@ def detectar_qr_webcam() -> None:
                     guardar(extraer_datos(decoded_info[0]))
                     exit = True
     
-                cv2.imshow(window_name, frame)
+                cv2.imshow(nombre_ventana, frame)
 
             if cv2.waitKey(delay) & 0xFF == ord('q'):
                 exit = True
 
-        cv2.destroyWindow(window_name)
+        cv2.destroyWindow(nombre_ventana)
     
     else:
         messagebox.showerror("Error", "Camara no detectada.")
