@@ -682,6 +682,11 @@ def calcular_asientos_actuales(
 
 
 def calcular_asientos(cantidad_asientos: dict) -> None:
+    '''
+    Pre: Recibe un diccionario vacio
+    Pos: Guarda la cantidad de asientos que hay por cine usando
+         la lista proporcionada por la API
+    '''
 
     cines: list = get_cines()
 
@@ -771,8 +776,6 @@ class ventanas(tk.Tk):
 
         calcular_asientos(cantidad_asientos)
         inventario.append(cantidad_asientos)
-
-        # self.inventario = inventario
         
         self.frames: dict = {}
         
@@ -785,8 +788,8 @@ class ventanas(tk.Tk):
             Carrito: Carrito
         }
         
-        for F in clase_frames:
-            self.frames[F] = None
+        for frame in clase_frames:
+            self.frames[frame] = None
 
         self.show_frame(Ubicacion, inventario)
 
