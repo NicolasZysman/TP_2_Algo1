@@ -20,6 +20,10 @@ INDICE_CINE_ID: int = 1
 INDICE_PELI_ID: int = 2
 INDICE_ASIENTOS_ACTUALES: int = 3
 
+INDICE_ETIQUETA: int = 0
+INDICE_CANTIDAD_ENTRADAS: int = 1
+INDICE_INGRESO: int = 2
+
 PRECIO_ENTRADA: int = 4400
 
 
@@ -467,7 +471,8 @@ def analizar_texto(
         self, 
         controller, 
         acumulador_precios: list, 
-        inventario: list
+        inventario: list,
+        etiquetas_a_eliminar: list
 ) -> None:
     
     cantidad_asientos: dict = inventario[INDICE_CANTIDAD_ASIENTOS]
@@ -477,6 +482,16 @@ def analizar_texto(
     if texto == "":
         messagebox.showerror("Error", "No ingresaste nada, por favor ingrese numeros.")
     else:
+
+        etiqueta = etiquetas_a_eliminar[INDICE_ETIQUETA]
+        cantidad_entradas = etiquetas_a_eliminar[INDICE_CANTIDAD_ENTRADAS]
+        ingreso = etiquetas_a_eliminar[INDICE_INGRESO]
+
+        mostrar_entradas(self, texto),
+        etiqueta.destroy(),
+        cantidad_entradas.destroy(),
+        ingreso.destroy()
+
         acumulador_precios.append(int(texto))
         acumulador_precios.append(PRECIO_ENTRADA)
 
@@ -830,17 +845,17 @@ class Ubicacion(tk.Frame):
         self.cantidad_asientos = cantidad_asientos
 
         for columna in range(cant_columnas):
-            self.grid_columnconfigure(columna, weight=1, minsize = 142)
+            self.grid_columnconfigure(columna, weight = 1, minsize = 142)
 
         info_cines: list[dict] = get_cines()
         ubicaciones: list[str] = obtener_ubicaciones(info_cines)
 
-        for i,ubicacion in enumerate(ubicaciones):
+        for iterador,ubicacion in enumerate(ubicaciones):
                 
                 boton = tk.Button(
                     self,
                     text=ubicacion,
-                    command = lambda cine_id=i + 1: [
+                    command = lambda cine_id= iterador + 1: [
                         inventario.append(cine_id),
                         controller.crear_y_mostrar_frame(
                         Cartelera, 
@@ -848,7 +863,7 @@ class Ubicacion(tk.Frame):
                         )
                     ]
                 )
-                boton.grid(row=0, column=i, padx = 5, sticky="nsew")
+                boton.grid(row = 0, column = iterador, padx = 5, sticky="nsew")
 
 
 class Cartelera(tk.Frame):
@@ -863,21 +878,21 @@ class Cartelera(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         canvas = tk.Canvas(self, height=1000, width=980)
-        canvas.pack(side="left", fill="both", expand=True)
+        canvas.pack(side = "left", fill = "both", expand = True)
 
-        scrollbar = tk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        scrollbar.pack(side="right", fill="y", expand=True)
+        scrollbar = tk.Scrollbar(self, orient = "vertical", command = canvas.yview)
+        scrollbar.pack(side = "right", fill = "y", expand = True)
 
-        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.configure(yscrollcommand = scrollbar.set)
         canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion = canvas.bbox("all")))
 
-        segundo_frame = tk.Frame(canvas, bg="dark blue")
-        canvas.create_window((0,0), window=segundo_frame, anchor="nw")
+        segundo_frame = tk.Frame(canvas, bg = "dark blue")
+        canvas.create_window((0,0), window = segundo_frame, anchor = "nw")
 
         cant_columnas: int = 8
 
         for col in range(cant_columnas):
-            segundo_frame.grid_columnconfigure(col, weight=1, minsize = 125)
+            segundo_frame.grid_columnconfigure(col, weight = 1, minsize = 125)
             
 
         cantidad_asientos: dict = inventario[INDICE_CANTIDAD_ASIENTOS]
@@ -1058,35 +1073,35 @@ class Reserva(tk.Frame):
 
         acumulador_precios: list = []
 
-        etiqueta_1 = tk.Label(self, text="Ingrese la cantidad de entradas")
-        etiqueta_1.grid(row=0, column=0)
+        etiqueta = tk.Label(self, text="Ingrese la cantidad de entradas")
+        etiqueta.grid(row=0, column=0)
 
         validacion = (self.register(validar_mensaje), "%P", asientos_actuales)
 
-        seleccionar_cantidad_entradas = tk.Entry(
+        cantidad_entradas = tk.Entry(
             self, 
             width=35, 
             borderwidth=2, 
             validate = "key", 
             validatecommand = validacion
         )
-        seleccionar_cantidad_entradas.grid(row=1, column=0)
+        cantidad_entradas.grid(row=1, column=0)
+
+        etiquetas_a_eliminar: list = [etiqueta, cantidad_entradas]
 
         ingreso = tk.Button(
                 self, 
                 text="Ingresar", 
                 command = lambda: [
+                    etiquetas_a_eliminar.append(ingreso),
                     analizar_texto(
-                            seleccionar_cantidad_entradas.get(), 
+                            cantidad_entradas.get(), 
                             self, 
                             controller, 
                             acumulador_precios,
-                            inventario
-                            ),
-                    mostrar_entradas(self, seleccionar_cantidad_entradas.get()),
-                    etiqueta_1.destroy(),
-                    seleccionar_cantidad_entradas.destroy(),
-                    ingreso.destroy()
+                            inventario,
+                            etiquetas_a_eliminar
+                        )
                 ]
             )
 
@@ -1124,7 +1139,7 @@ class Busqueda(tk.Frame):
             entrada_busqueda: str, 
     ):
     
-        tk.Frame.__init__(self, parent, bg="green")
+        tk.Frame.__init__(self, parent, bg="dark blue")
 
         cantidad_asientos: dict = inventario[INDICE_CANTIDAD_ASIENTOS]
         cine_id: int = inventario[INDICE_CINE_ID]
@@ -1134,7 +1149,7 @@ class Busqueda(tk.Frame):
         self.lista_pelis_en_cine: list[int] = lista_pelis_en_cine
         self.entrada_busqueda: str = entrada_busqueda
 
-        canvas = tk.Canvas(self, height=1000, width=980, bg="green") # width = el ancho de la ventana - 20px de scrollbar
+        canvas = tk.Canvas(self, height=1000, width=980, bg="dark blue") # width = el ancho de la ventana - 20px de scrollbar
         canvas.pack(side="left", fill="both", expand=True)
 
         # Agregar scrollbar al canvas
@@ -1149,7 +1164,7 @@ class Busqueda(tk.Frame):
         # segundo_frame = tk.Frame(canvas, bg="green")
 
         # Crear frame en el canvas
-        segundo_frame = tk.Frame(canvas, bg="green")
+        segundo_frame = tk.Frame(canvas, bg="dark blue")
 
         # Agregar el segundo frame a una ventana en el canvas
         canvas.create_window((0,0), window=segundo_frame, anchor="nw")
