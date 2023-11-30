@@ -154,20 +154,23 @@ def detectar_qr_webcam():
 
     exit = False
 
-    while not exit:
-        ret, frame = cap.read()
+    if cap.isOpened():
+        while not exit:
+            ret, frame = cap.read()
 
-        if ret:
-            ret_qr, decoded_info, _, _ = qcd.detectAndDecodeMulti(frame)
-            if ret_qr and decoded_info[0]:
-                guardar(extraer_datos(decoded_info[0]))
+            if ret:
+                ret_qr, decoded_info, _, _ = qcd.detectAndDecodeMulti(frame)
+                if ret_qr and decoded_info[0]:
+                    guardar(extraer_datos(decoded_info[0]))
+                    exit = True
+                cv2.imshow(window_name, frame)
+
+            if cv2.waitKey(delay) & 0xFF == ord('q'): # q para salir
                 exit = True
-            cv2.imshow(window_name, frame)
 
-        if cv2.waitKey(delay) & 0xFF == ord('q'): # q para salir
-            exit = True
-
-    cv2.destroyWindow(window_name)
+        cv2.destroyWindow(window_name)
+    else:
+        messagebox.showerror("Error", "Camara no detectada.")
 
 def main():
     app = ventanas()
