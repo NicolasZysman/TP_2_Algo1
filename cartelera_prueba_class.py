@@ -723,8 +723,8 @@ def formatear_texto(texto: str) -> str:
 
 def snacks_elegidas(snacks_dic: dict):
 
-    string_snacks = []
-    
+    string_snacks = ""
+
     if len(snacks_dic) >= 1:
         for producto in snacks_dic:
             string_snacks += producto + " "
@@ -745,8 +745,7 @@ def remover_elementos_inventario(inventario: list, indice_elemento: int) -> None
 
         else:
             contador += 1
-
-
+        
 def mostrar_entradas(
         self, 
         cantidad_entradas: int
@@ -1070,22 +1069,22 @@ class Reserva(tk.Frame):
         seleccionar_cantidad_entradas.grid(row=1, column=0)
 
         ingreso = tk.Button(
-                self, 
-                text="Ingresar", 
-                command = lambda: [
-                    analizar_texto(
-                            seleccionar_cantidad_entradas.get(), 
-                            self, 
-                            controller, 
-                            acumulador_precios,
-                            inventario
-                            ),
-                    mostrar_entradas(self, seleccionar_cantidad_entradas.get()),
-                    etiqueta_1.destroy(),
-                    seleccionar_cantidad_entradas.destroy(),
-                    ingreso.destroy()
-                ]
-            )
+            self, 
+            text="Ingresar", 
+            command = lambda: [
+                analizar_texto(
+                        seleccionar_cantidad_entradas.get(), 
+                        self, 
+                        controller, 
+                        acumulador_precios,
+                        inventario
+                        ),
+                mostrar_entradas(self, seleccionar_cantidad_entradas.get()),
+                etiqueta_1.destroy(),
+                seleccionar_cantidad_entradas.destroy(),
+                ingreso.destroy()
+            ]
+        )
 
         ingreso.grid(row=2, column=0)
 
@@ -1210,17 +1209,14 @@ class Carrito(tk.Frame):
         cantidad_entradas = precios["Cantidad entradas"]
         precio_entradas = precios["Cantidad entradas"] * precios["Valor unitario"]
         snacks = precios["Snacks"]
-        
         precio_total = precios["Precio Total"]
-        snacks_elegidos = str(snacks)[1:-1]
-        
+        snacks_elegidos = snacks_elegidas(snacks)
         
         tk.Label(self, text = f"CINEPOLIS {ubicacion}", font=("Arial", 15)).pack()
         tk.Label(self, text = f"Pelicula: {info_peli['name']}", font=("Arial", 10)).pack(pady = 5)
-        tk.Label(self, text = 
-                 f"Cantidad de entradas: {cantidad_entradas} - $ {precio_entradas}\nSnacks elegidos: {snacks_elegidos}\nPrecio total de su compra: $ {precio_total}", 
-                 font=("Arial", 10)).pack(pady=5)
-       
+        tk.Label(self, text = f"Cantidad de entradas: {cantidad_entradas} - $ {precio_entradas}\nSnacks elegidos: {snacks_elegidos}\nPrecio total de su compra: $ {precio_total}", font=("Arial", 10)).pack(pady=5)
+        print(precios)
+
 
         boton_qr = tk.Button(
             self, 
@@ -1282,3 +1278,4 @@ def main() -> None:
 
 
 main()
+
