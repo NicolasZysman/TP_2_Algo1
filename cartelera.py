@@ -457,7 +457,7 @@ def añadir_botones_reserva(
         self, 
         text="Añadir al carro", 
         bg="green" , 
-        command = lambda: controller.show_frame(Carrito, mostrar_compra(acumulador_precios, info_snacks), inventario) 
+        command = lambda: controller.crear_y_mostrar_frame(Carrito, mostrar_compra(acumulador_precios, info_snacks), inventario) 
     )
 
     agregar.grid(row=11, column=1)
@@ -522,11 +522,11 @@ def filtrar_busqueda(
 
     if len(pelis_encontradas) == 0:
         messagebox.showerror("Error", "No se encuentra la pelicula en este cine")
-        controller.show_frame(Cartelera, inventario)
+        controller.crear_y_mostrar_frame(Cartelera, inventario)
 
     if get_entry == "":
         messagebox.showerror("Error", "No ha ingresado una pelicula")
-        controller.show_frame(Cartelera, inventario)
+        controller.crear_y_mostrar_frame(Cartelera, inventario)
         
     lista_posters = lista_img_posters(poster_id)
 
@@ -575,7 +575,7 @@ def posters_cartelera(
                             lista_pelis_en_cine
                             )
                     ),
-                    controller.show_frame(
+                    controller.crear_y_mostrar_frame(
                         Pelicula,  
                         inventario
                     )
@@ -623,7 +623,7 @@ def posters_busqueda(
                 image=tk_imagen, 
                 command = lambda boton_apretado=i: [
                     inventario.append(encontrar_peli_id(boton_apretado, id_peliculas)),
-                    controller.show_frame(Pelicula, inventario)
+                    controller.crear_y_mostrar_frame(Pelicula, inventario)
                 ]
             )
             boton.grid(row=fila, column = columna, pady = 10)
@@ -791,10 +791,10 @@ class ventanas(tk.Tk):
         for frame in clase_frames:
             self.frames[frame] = None
 
-        self.show_frame(Ubicacion, inventario)
+        self.crear_y_mostrar_frame(Ubicacion, inventario)
 
 
-    def show_frame(self, clase, *args) -> None:
+    def crear_y_mostrar_frame(self, clase, *args) -> None:
         '''
         Pre: Recibe la clase y uno o multiples
         argumentos
@@ -829,8 +829,8 @@ class Ubicacion(tk.Frame):
         cantidad_asientos: dict = inventario[INDICE_CANTIDAD_ASIENTOS]
         self.cantidad_asientos = cantidad_asientos
 
-        for col in range(cant_columnas):
-            self.grid_columnconfigure(col, weight=1, minsize = 142)
+        for columna in range(cant_columnas):
+            self.grid_columnconfigure(columna, weight=1, minsize = 142)
 
         info_cines: list[dict] = get_cines()
         ubicaciones: list[str] = obtener_ubicaciones(info_cines)
@@ -842,7 +842,7 @@ class Ubicacion(tk.Frame):
                     text=ubicacion,
                     command = lambda cine_id=i + 1: [
                         inventario.append(cine_id),
-                        controller.show_frame(
+                        controller.crear_y_mostrar_frame(
                         Cartelera, 
                         inventario
                         )
@@ -900,7 +900,7 @@ class Cartelera(tk.Frame):
         boton_busqueda = tk.Button(
             segundo_frame, 
             text = "Buscar pelicula...", 
-            command = lambda: controller.show_frame(
+            command = lambda: controller.crear_y_mostrar_frame(
                 Busqueda,
                 lista_pelis_en_cine, 
                 inventario,  
@@ -917,7 +917,7 @@ class Cartelera(tk.Frame):
                     inventario,
                     INDICE_CINE_ID
                 ),
-                controller.show_frame(Ubicacion, inventario)]
+                controller.crear_y_mostrar_frame(Ubicacion, inventario)]
         )
         volver_al_menu.grid(row = 2, column = 3, columnspan= 2, padx=10, pady=10)
 
@@ -1001,7 +1001,7 @@ class Pelicula(tk.Frame):
                 self, 
                 text="Reservar", 
                 bg="green", 
-                command = lambda: controller.show_frame(
+                command = lambda: controller.crear_y_mostrar_frame(
                     Reserva, 
                     inventario
                 )
@@ -1023,7 +1023,7 @@ class Pelicula(tk.Frame):
                     inventario,
                     INDICE_ASIENTOS_ACTUALES
                 ),
-                controller.show_frame(
+                controller.crear_y_mostrar_frame(
                                     Cartelera, 
                                     inventario
                                 )
@@ -1102,7 +1102,7 @@ class Reserva(tk.Frame):
             self, 
             text="Volver", 
             bg="red", 
-            command = lambda: controller.show_frame(
+            command = lambda: controller.crear_y_mostrar_frame(
                 Pelicula,
                 inventario
             )
@@ -1175,7 +1175,7 @@ class Busqueda(tk.Frame):
         boton_volver = tk.Button(
             segundo_frame, 
             text="Volver a Cartelera", 
-            command = lambda: controller.show_frame(
+            command = lambda: controller.crear_y_mostrar_frame(
                 Cartelera, 
                 inventario
             )
@@ -1243,7 +1243,7 @@ class Carrito(tk.Frame):
                     inventario,
                     INDICE_ASIENTOS_ACTUALES
                 ),
-                controller.show_frame(
+                controller.crear_y_mostrar_frame(
                     Cartelera, 
                     inventario
                 )
