@@ -4,7 +4,9 @@ import os
 import cv2
 
 class ventanas(tk.Tk):
+    
     def __init__(self, *args, **kwargs):
+    
         tk.Tk.__init__(self, *args, **kwargs)
         
         self.wm_title("App QR")
@@ -24,15 +26,22 @@ class ventanas(tk.Tk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame(MenuPrincipal)
+        self.mostrar_frame(MenuPrincipal)
 
-    def show_frame(self, cont):
-        frame = self.frames[cont]
+    def mostrar_frame(self, clase) -> None:
+        '''
+        Pre: Recibe la clase
+        Post: Cambia al frame que se recibe por parametro
+        '''
+         
+        frame = self.frames[clase]
         frame.tkraise()
 
 
 class MenuPrincipal(tk.Frame):
+  
     def __init__(self, parent, controller):
+  
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Menu principal")
         label.pack(padx=10, pady=10)
@@ -47,20 +56,22 @@ class MenuPrincipal(tk.Frame):
         switch_window_button1 = tk.Button(
             self,
             text="Leer QR",
-            command=lambda: controller.show_frame(LeerQR),
+            command=lambda: controller.mostrar_frame(LeerQR),
         )
         switch_window_button1.pack(side="bottom", fill=tk.X)
 
         switch_window_button2 = tk.Button(
             self,
             text="Ingresar ID",
-            command=lambda: controller.show_frame(IngresarID),
+            command=lambda: controller.mostrar_frame(IngresarID),
         )
         switch_window_button2.pack(side="bottom", fill=tk.X)
 
 
 class IngresarID(tk.Frame):
+    
     def __init__(self, parent, controller):
+    
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Ingresar ID")
         label.pack(padx=10, pady=10)
@@ -68,7 +79,7 @@ class IngresarID(tk.Frame):
         volver_al_menu = tk.Button(
             self,
             text="Volver al menu",
-            command=lambda: controller.show_frame(MenuPrincipal),
+            command=lambda: controller.mostrar_frame(MenuPrincipal),
         )
         volver_al_menu.pack(side="bottom", fill=tk.X)
 
@@ -86,7 +97,9 @@ class IngresarID(tk.Frame):
 
 
 class LeerQR(tk.Frame):
+
     def __init__(self, parent, controller):
+    
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Leer QR")
         label.pack(padx=10, pady=10)
@@ -94,8 +107,9 @@ class LeerQR(tk.Frame):
         volver_al_menu = tk.Button(
             self,
             text="Volver al menu",
-            command=lambda: controller.show_frame(MenuPrincipal),
+            command=lambda: controller.mostrar_frame(MenuPrincipal),
         )
+    
         volver_al_menu.pack(side="bottom", fill=tk.X)
 
         instrucciones = tk.Label(self, text="Click para escanear el QR con la webcam.\nPresione 'q' para cancelar.")
@@ -106,10 +120,19 @@ class LeerQR(tk.Frame):
             text="Escanear QR",
             command=lambda: detectar_qr_webcam(),
         )
+    
         escanear.pack(side="bottom", padx=10, pady=10, fill=tk.X)
 
+
 def validar_mensaje(texto: str) -> bool:
+    '''
+        Pre: Recibe un texto de str
+        Post: Valida que el texto sea el deseado y 
+        devuelve true si lo es 
+    '''
+
     validacion: bool = False
+    
     if texto.isnumeric() == True or texto == "":
         validacion = True
     else:
@@ -117,13 +140,27 @@ def validar_mensaje(texto: str) -> bool:
 
     return validacion
 
-def guardar(informacion: str): # timestamp, Id_QR, nombre_pelicula, cant_entradas, total_consumido
+
+def guardar(informacion: str) -> None: # timestamp, Id_QR, nombre_pelicula, cant_entradas, total_consumido
+    '''
+    Pre: Recibe un str de informacion
+    Post: Escribi la inforamcion recibida en el archivo ingresos.txt
+    '''
+    
     with open("ingresos.txt", "a") as archivo:
+    
         linea = informacion + "\n"
         archivo.write(linea)
+    
     messagebox.showinfo("Info", "Se leyo el QR correctamente")
 
-def extraer_datos(string): # Id_QR, nombre_pelicula, ubicacion, cant_entradas, total_consumido, timestamp
+
+def extraer_datos(string: str) -> str: # Id_QR, nombre_pelicula, ubicacion, cant_entradas, total_consumido, timestamp
+    '''
+    Pre: Recibe un string
+    Post: Devuelve un str con la informacion del qr ordenada
+    '''
+    
     lista_datos = string.split("_")
     
     id_qr = lista_datos[0]
@@ -136,44 +173,67 @@ def extraer_datos(string): # Id_QR, nombre_pelicula, ubicacion, cant_entradas, t
 
     return string_ordenado
 
-def detectar_qr_archivo(id_qr: str):
+
+def detectar_qr_archivo(id_qr: str) -> None:
+    '''
+    Pre: REcibe un str de id_qr
+    Post: Lee y guarde la informacion del qr, si el id ingresado
+    es incorrecto se le indica al usuario 
+    '''
+    
     if os.path.isfile(f"QR/qr{id_qr}.pdf"):
+    
         img = cv2.imread(f"QR/qr{id_qr}.pdf")
         detect = cv2.QRCodeDetector()
         value = detect.detectAndDecode(img)
         guardar(extraer_datos(value[0]))
+    
     else:
         messagebox.showerror("Error", "El ID especificado no existe.")
 
-def detectar_qr_webcam():
-    camera_id = 0
-    delay = 1
-    window_name = 'OpenCV QR Code'
+
+def detectar_qr_webcam() -> None:
+    '''
+    Pre: XXX
+    Post: Lee con la camara el qr proporcionado y guarda la informacion
+    '''
+    
+    camera_id: int = 0
+    delay: int = 1
+    window_name: str = 'OpenCV QR Code'
 
     qcd = cv2.QRCodeDetector()
     cap = cv2.VideoCapture(camera_id)
 
-    exit = False
+    exit: bool = False
 
     if cap.isOpened():
+    
         while not exit:
             ret, frame = cap.read()
 
             if ret:
+    
                 ret_qr, decoded_info, _, _ = qcd.detectAndDecodeMulti(frame)
+    
                 if ret_qr and decoded_info[0]:
+    
                     guardar(extraer_datos(decoded_info[0]))
                     exit = True
+    
                 cv2.imshow(window_name, frame)
 
             if cv2.waitKey(delay) & 0xFF == ord('q'): # q para salir
                 exit = True
 
         cv2.destroyWindow(window_name)
+    
     else:
         messagebox.showerror("Error", "Camara no detectada.")
 
-def main():
+
+def main() -> None:
+    
     app = ventanas()
     app.mainloop()
 
