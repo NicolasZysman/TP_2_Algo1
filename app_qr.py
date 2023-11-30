@@ -141,7 +141,7 @@ def validar_mensaje(texto: str) -> bool:
     return validacion
 
 
-def guardar(informacion: str) -> None: # timestamp, Id_QR, nombre_pelicula, cant_entradas, total_consumido
+def guardar(informacion: str) -> None:
     '''
     Pre: Recibe un str de informacion
     Post: Escribi la inforamcion recibida en el archivo ingresos.txt
@@ -155,7 +155,7 @@ def guardar(informacion: str) -> None: # timestamp, Id_QR, nombre_pelicula, cant
     messagebox.showinfo("Info", "Se leyo el QR correctamente")
 
 
-def extraer_datos(string: str) -> str: # Id_QR, nombre_pelicula, ubicacion, cant_entradas, total_consumido, timestamp
+def extraer_datos(string: str) -> str: 
     '''
     Pre: Recibe un string
     Post: Devuelve un str con la informacion del qr ordenada
@@ -223,7 +223,7 @@ def detectar_qr_webcam() -> None:
     
                 cv2.imshow(window_name, frame)
 
-            if cv2.waitKey(delay) & 0xFF == ord('q'): # q para salir
+            if cv2.waitKey(delay) & 0xFF == ord('q'):
                 exit = True
 
         cv2.destroyWindow(window_name)
